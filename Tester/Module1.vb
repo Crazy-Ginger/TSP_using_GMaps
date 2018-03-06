@@ -85,9 +85,10 @@ Module Module1
     End Function
 
 
-    Public Function Bruteforce(nodes As List(Of Node), ByRef final As Boolean)
+    Public Function Bruteforce(ByRef nodes As List(Of Node), ByVal final As Boolean)
         'https://rosettacode.org/wiki/Permutations#VBA
         Dim t As Integer
+        Dim temp As New Node
         Dim i As Integer
         Dim j As Integer
         Dim k As Integer
@@ -137,9 +138,10 @@ Module Module1
             j = j + 1 'orig was j = j + 1
 
             'Swap p(i) and p(j)
-            t = nodes.Item(i).temp
-            nodes.Item(i).temp = nodes.Item(j).temp
-            nodes.Item(j).temp = t
+            temp = nodes.Item(i)
+            nodes.Item(i) = nodes.Item(j)
+
+            nodes.Item(j) = temp
 
             Console.WriteLine(count)
             Console.WriteLine()
