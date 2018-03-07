@@ -9,8 +9,6 @@ Imports System.Xml
 Public Class Node
     Public address As String
     Public original As Integer
-    Public temp As Integer
-    Public final As Integer
 End Class
 
 Module Module1
@@ -25,7 +23,6 @@ Module Module1
         Console.Write("Your first destination: ")
         nodel.address = Console.ReadLine()
         nodel.original = node_list.Count
-        nodel.temp = node_list.Count + 1
         node_list.Add(nodel)
 
         List_print(node_list, True)
@@ -35,7 +32,6 @@ Module Module1
             Console.Write("Next destination: ")
             nodeel.address = Console.ReadLine()
             nodeel.original = node_list.Count
-            nodeel.temp = node_list.Count + 1
             node_list.Add(nodeel)
 
             List_print(node_list, True)
@@ -51,7 +47,6 @@ Module Module1
             Dim nodeel As New Node
             nodeel.address = Console.ReadLine()
             nodeel.original = node_list.Count
-            nodel.temp = node_list.Count + 1
             node_list.Add(nodeel)
         End If
         List_print(node_list, True)
@@ -66,7 +61,7 @@ Module Module1
             Console.Clear()
         End If
         For i As Integer = 0 To list.Count - 1
-            Console.WriteLine("Address: " & list.Item(i).address & vbTab & "Original is: " & list.Item(i).original & vbTab & "Temp is: " & list.Item(i).temp)
+            Console.WriteLine("Address: " & list.Item(i).address & vbTab & "Original is: " & list.Item(i).original)
         Next
         Console.WriteLine()
         Return Nothing
@@ -85,10 +80,15 @@ Module Module1
     End Function
 
 
+    Public Function Print_arrangement(ByVal pointers() As Integer, ByRef nodes As List(Of Node))
+
+        Return Nothing
+    End Function
+
     Public Function Bruteforce(ByRef nodes As List(Of Node), ByVal final As Boolean)
         'https://rosettacode.org/wiki/Permutations#VBA
+        Dim pointers(nodes.Count - 1) As Integer
         Dim t As Integer
-        Dim temp As New Node
         Dim i As Integer
         Dim j As Integer
         Dim k As Integer
@@ -96,52 +96,48 @@ Module Module1
         Dim Last As Boolean
         Dim length As Integer = nodes.Count
         'Initialize
-
+        For o As Integer = 1 To length
+            pointers(o) = o
+        Next
         count = 0
         Last = False
         Do While Not Last
-            List_print(nodes, False)
-
+            Print_arrangement(pointers, nodes)
             count = count + 1
             Last = True
-            i = length - 2
+            i = length - 1
 
-
-            Console.WriteLine("i:" & i)
-            Do While i > -1     'orig was Do while i > 0
-                Console.WriteLine("i-temp:" & nodes.Item(i).temp & vbTab & "i+1temp:" & nodes.Item(i + 1).temp)
-                If nodes.Item(i).temp < nodes.Item(i + 1).temp Then
+            Do While i > 0    'orig was Do while i > 0
+                If pointers(i) < pointers(i + 1) Then
                     Last = False
-                    Console.WriteLine("last:" & Last)
                     Exit Do
                 End If
 
                 i = i - 1
             Loop
 
-
-            j = i       'orig was j = i +1
-            k = length - 1      'orig was k = length
+            j = i + 1    'orig was j = i +1
+            k = length       'orig was k = length
             While j < k
                 Console.WriteLine("j:" & j & vbTab & "k:" & k & vbTab & "t:" & t)
                 ' Swap p(j) and p(k)
-                t = nodes.Item(j).temp
-                nodes.Item(j).temp = nodes.Item(k).temp
-                nodes.Item(k).temp = t
+                t = pointers(j)
+                pointers(j) = pointers(k)
+                pointers(k) = t
                 j = j + 1
                 k = k - 1
             End While
-            j = length - 1      'orig was j = length
-            While nodes.Item(j).temp > nodes.Item(i).temp
+            j = length   'orig was j = length
+            While pointers(j) > pointers(i)
                 j = j - 1       'orig was j = j -1
             End While
             j = j + 1 'orig was j = j + 1
 
             'Swap p(i) and p(j)
-            temp = nodes.Item(i)
-            nodes.Item(i) = nodes.Item(j)
 
-            nodes.Item(j) = temp
+            t = pointers(i)
+            pointers(i) = pointers(j)
+            pointers(j) = t
 
             Console.WriteLine(count)
             Console.WriteLine()
