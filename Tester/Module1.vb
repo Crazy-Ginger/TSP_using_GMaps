@@ -81,7 +81,9 @@ Module Module1
 
 
     Public Function Print_arrangement(ByVal pointers() As Integer, ByRef nodes As List(Of Node))
+        For i As Integer = 0 To nodes.Count
 
+        Next
         Return Nothing
     End Function
 
