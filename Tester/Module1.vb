@@ -16,23 +16,25 @@ Module Module1
     Sub Main()
         Dim latLngKey As String = "AIzaSyA3A7tDgpFISYEY3B5qYdXm9StRa0pJkcA"
         Dim waypointkey As String = "AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w"
-        Dim node_list As New List(Of Node)
-        Dim nodel As New Node
+
+        Dim node_list As New List(Of String)
+        'Dim nodel As New Node
         Dim cont As Boolean = True
 
         Console.Write("Your first destination: ")
-        nodel.address = Console.ReadLine()
-        nodel.original = node_list.Count
-        node_list.Add(nodel)
+        'nodel.address = Console.ReadLine()
+        'nodel.original = node_list.Count
+        'node_list.Add(nodel)
+        node_list.Add(Console.ReadLine())
 
         List_print(node_list, True)
 
         While cont = True Or node_list.Count < 2
             Dim nodeel As New Node
             Console.Write("Next destination: ")
-            nodeel.address = Console.ReadLine()
-            nodeel.original = node_list.Count
-            node_list.Add(nodeel)
+            'nodeel.address = Console.ReadLine()
+            'nodeel.original = node_list.Count
+            node_list.Add(Console.ReadLine())
 
             List_print(node_list, True)
 
@@ -44,24 +46,24 @@ Module Module1
         cont = Console.ReadLine()
         If cont = True Then
             Console.Write("Final destination: ")
-            Dim nodeel As New Node
-            nodeel.address = Console.ReadLine()
-            nodeel.original = node_list.Count
-            node_list.Add(nodeel)
+            'Dim nodeel As New Node
+            node_list.Add(Console.ReadLine())
         End If
-        List_print(node_list, True)
-
         Console.Clear()
-        Bruteforce(node_list, cont)
+        List_print(node_list, False)
+
+
+        Permute(node_list.Count, node_list)
+        'Bruteforce(node_list, cont)
         Console.ReadLine()
     End Sub
 
-    Function List_print(ByRef list As List(Of Node), clear As Boolean)
+    Function List_print(ByRef list As List(Of String), clear As Boolean)
         If clear = True Then
             Console.Clear()
         End If
         For i As Integer = 0 To list.Count - 1
-            Console.WriteLine("Address: " & list.Item(i).address & vbTab & "Original is: " & list.Item(i).original)
+            Console.WriteLine("Address: " & list.Item(i))
         Next
         Console.WriteLine()
         Return Nothing
@@ -80,14 +82,15 @@ Module Module1
     End Function
 
 
-    Public Function Print_arrangement(ByVal pointers() As Integer, ByRef nodes As List(Of Node))
-        For i As Integer = 0 To nodes.Count
-
+    Public Function Print_arrangement(ByVal pointers() As Integer, ByRef nodes As List(Of String))
+        For i As Integer = 0 To nodes.Count - 1
+            Console.Write(nodes.Item(pointers(i)) & ", ")
         Next
+        Console.WriteLine()
         Return Nothing
     End Function
 
-    Public Function Bruteforce(ByRef nodes As List(Of Node), ByVal final As Boolean)
+    Public Function Bruteforce(ByRef nodes As List(Of String), ByVal final As Boolean)
         'https://rosettacode.org/wiki/Permutations#VBA
         Dim pointers(nodes.Count - 1) As Integer
         Dim t As Integer
@@ -96,11 +99,13 @@ Module Module1
         Dim k As Integer
         Dim count As Long
         Dim Last As Boolean
-        Dim length As Integer = nodes.Count
+        Dim length As Integer = nodes.Count - 1
         'Initialize
         For o As Integer = 1 To length
             pointers(o) = o
+            Console.Write(o & ", ")
         Next
+        Console.WriteLine()
         count = 0
         Last = False
         Do While Not Last
@@ -121,7 +126,6 @@ Module Module1
             j = i + 1    'orig was j = i +1
             k = length       'orig was k = length
             While j < k
-                Console.WriteLine("j:" & j & vbTab & "k:" & k & vbTab & "t:" & t)
                 ' Swap p(j) and p(k)
                 t = pointers(j)
                 pointers(j) = pointers(k)
@@ -150,6 +154,66 @@ Module Module1
         Console.ReadLine()
         Return Nothing
     End Function
+
+    Sub Permute(n As Integer, ByRef nodes As List(Of String))
+        'Generate, count and print (if printem is not false) all permutations of first n integers
+
+        Dim P(n - 1) As Integer
+        Dim t As Integer, i As Integer, j As Integer, k As Integer
+        Dim count As Long
+        Dim Last As Boolean
+
+        For i As Integer = 0 To n - 1
+            P(i) = i
+            Console.Write(P(t) & ", ")
+        Next
+        Console.WriteLine("Hello?")
+        count = 0
+        Last = False
+
+        Do While Not Last
+
+            count = count + 1
+            Last = True
+            i = n - 1
+
+            Do While i > 0
+
+                If P(i - 1) < P(i) Then
+
+                    Last = False
+                    Exit Do
+
+                End If
+                i = i - 1
+            Loop
+
+            j = i + 1
+            k = n
+
+            While j < k
+                ' Swap p(j) and p(k)
+                t = P(j)
+                P(j) = P(k)
+                P(k) = t
+                j = j + 1
+                k = k - 1
+            End While
+
+            j = n - 1
+            While P(j) > P(i)
+                j = j - 1
+            End While
+
+            j = j
+            'Swap p(i) and p(j)
+            t = P(i)
+            P(i) = P(j)
+            P(j) = t
+        Loop 'While not last
+
+        Console.WriteLine("Number of permutations: " & count)
+    End Sub
 
 
     Function Waypointing(ByVal start As String, ByVal finish As String, ByVal key As String)
