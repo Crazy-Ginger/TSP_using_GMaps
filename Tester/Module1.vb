@@ -52,9 +52,7 @@ Module Module1
         Console.Clear()
         List_print(node_list, False)
 
-
-        Permute(node_list.Count, node_list)
-        'Bruteforce(node_list, cont)
+        Faith_Permute(node_list.Count, node_list)
         Console.ReadLine()
     End Sub
 
@@ -81,14 +79,6 @@ Module Module1
         Return nodes
     End Function
 
-
-    Public Function Print_arrangement(ByVal pointers() As Integer, ByRef nodes As List(Of String))
-        For i As Integer = 0 To nodes.Count - 1
-            Console.Write(nodes.Item(pointers(i)) & ", ")
-        Next
-        Console.WriteLine()
-        Return Nothing
-    End Function
 
     Public Function Bruteforce(ByRef nodes As List(Of String), ByVal final As Boolean)
         'https://rosettacode.org/wiki/Permutations#VBA
@@ -155,65 +145,67 @@ Module Module1
         Return Nothing
     End Function
 
-    Sub Permute(n As Integer, ByRef nodes As List(Of String))
-        'Generate, count and print (if printem is not false) all permutations of first n integers
+    'Sub Permute(n As Integer, ByRef nodes As List(Of String))
+    '    'Generate, count and print (if printem is not false) all permutations of first n integers
+    '    'https://rosettacode.org/wiki/Permutations#VBA
 
-        Dim P(n - 1) As Integer
-        Dim t As Integer, i As Integer, j As Integer, k As Integer
-        Dim count As Long
-        Dim Last As Boolean
+    '    Dim P(n) As Integer
+    '    Dim t As Integer, i As Integer, j As Integer, k As Integer
+    '    Dim count As Long
+    '    Dim Last As Boolean
 
-        For i As Integer = 0 To n - 1
-            P(i) = i
-            Console.Write(P(t) & ", ")
-        Next
-        Console.WriteLine("Hello?")
-        count = 0
-        Last = False
+    '    For o As Integer = 0 To n - 1
+    '        P(o) = o + 1
+    '        Console.Write(P(o) & ", ")
+    '    Next
+    '    count = 0
+    '    Last = False
 
-        Do While Not Last
+    '    Do While Not Last
+    '        'Print_arrangement(P, nodes)
+    '        For l As Integer = 0 To n - 1
+    '            Console.Write(P(l) & ", ")
+    '        Next
+    '        Console.WriteLine()
+    '        count = count + 1
+    '        Last = True
+    '        i = n - 1
 
-            count = count + 1
-            Last = True
-            i = n - 1
+    '        Do While i > 0
 
-            Do While i > 0
+    '            If P(i) < P(i + 1) Then
+    '                Last = False
+    '                Exit Do
+    '            End If
+    '            i = i - 1
+    '        Loop
 
-                If P(i - 1) < P(i) Then
+    '        j = i + 1
+    '        k = n
 
-                    Last = False
-                    Exit Do
+    '        While j < k
+    '            ' Swap p(j) and p(k)
+    '            t = P(j)
+    '            P(j) = P(k)
+    '            P(k) = t
+    '            j = j + 1
+    '            k = k - 1
+    '        End While
 
-                End If
-                i = i - 1
-            Loop
+    '        j = n - 1
+    '        While P(j) > P(i)
+    '            j = j - 1
+    '        End While
 
-            j = i + 1
-            k = n
+    '        j = j
+    '        'Swap p(i) and p(j)
+    '        t = P(i)
+    '        P(i) = P(j)
+    '        P(j) = t
+    '    Loop 'While not last
 
-            While j < k
-                ' Swap p(j) and p(k)
-                t = P(j)
-                P(j) = P(k)
-                P(k) = t
-                j = j + 1
-                k = k - 1
-            End While
-
-            j = n - 1
-            While P(j) > P(i)
-                j = j - 1
-            End While
-
-            j = j
-            'Swap p(i) and p(j)
-            t = P(i)
-            P(i) = P(j)
-            P(j) = t
-        Loop 'While not last
-
-        Console.WriteLine("Number of permutations: " & count)
-    End Sub
+    '    Console.WriteLine("Number of permutations: " & count)
+    'End Sub
 
 
     Function Waypointing(ByVal start As String, ByVal finish As String, ByVal key As String)
