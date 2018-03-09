@@ -16,7 +16,8 @@ Module Module1
     Sub Main()
         Dim latLngKey As String = "AIzaSyA3A7tDgpFISYEY3B5qYdXm9StRa0pJkcA"
         Dim waypointkey As String = "AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w"
-
+        Waypointing()
+        Console.ReadLine()
         Dim node_list As New List(Of String)
         'Dim nodel As New Node
         Dim cont As Boolean = True
@@ -80,78 +81,17 @@ Module Module1
     End Function
 
 
-    'Sub Permute(n As Integer, ByRef nodes As List(Of String))
-    '    'Generate, count and print (if printem is not false) all permutations of first n integers
-    '    'https://rosettacode.org/wiki/Permutations#VBA
-
-    '    Dim P(n) As Integer
-    '    Dim t As Integer, i As Integer, j As Integer, k As Integer
-    '    Dim count As Long
-    '    Dim Last As Boolean
-
-    '    For o As Integer = 0 To n - 1
-    '        P(o) = o + 1
-    '        Console.Write(P(o) & ", ")
-    '    Next
-    '    count = 0
-    '    Last = False
-
-    '    Do While Not Last
-    '        'Print_arrangement(P, nodes)
-    '        For l As Integer = 0 To n - 1
-    '            Console.Write(P(l) & ", ")
-    '        Next
-    '        Console.WriteLine()
-    '        count = count + 1
-    '        Last = True
-    '        i = n - 1
-
-    '        Do While i > 0
-
-    '            If P(i) < P(i + 1) Then
-    '                Last = False
-    '                Exit Do
-    '            End If
-    '            i = i - 1
-    '        Loop
-
-    '        j = i + 1
-    '        k = n
-
-    '        While j < k
-    '            ' Swap p(j) and p(k)
-    '            t = P(j)
-    '            P(j) = P(k)
-    '            P(k) = t
-    '            j = j + 1
-    '            k = k - 1
-    '        End While
-
-    '        j = n - 1
-    '        While P(j) > P(i)
-    '            j = j - 1
-    '        End While
-
-    '        j = j
-    '        'Swap p(i) and p(j)
-    '        t = P(i)
-    '        P(i) = P(j)
-    '        P(j) = t
-    '    Loop 'While not last
-
-    '    Console.WriteLine("Number of permutations: " & count)
-    'End Sub
-
-
-    Function Waypointing(ByVal start As String, ByVal finish As String, ByVal key As String)
+    Function Waypointing() 'ByVal start As String, ByVal finish As String, ByVal key As String
         Dim output As StringBuilder = New StringBuilder()
 
         'Dim request As System.Net.HttpWebRequest = System.Net.HttpWebRequest.Create("https://maps.googleapis.com/maps/api/directions/xml?origin=" & start & "&destination=" & finish & "&key=" & key)
         Dim request As System.Net.HttpWebRequest = System.Net.HttpWebRequest.Create("https://maps.googleapis.com/maps/api/directions/xml?origin=HD22EB&destination=Manchester&key=AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w")
-
+        Dim test As System.Net.HttpWebRequest = System.Net.HttpWebRequest.Create("https://google.co.uk")
+        'https://msdn.microsoft.com/en-us/library/system.xml.xmlreader(v=vs.110).aspx
         Using client = New WebClient()
-
-            Dim response As System.Net.HttpWebResponse = request.GetResponse()
+            'https://social.msdn.microsoft.com/Forums/en-US/057094d9-47b4-4670-904b-c58bc320d52b/the-underlying-connection-was-closed-unable-to-connect-to-the-remote-server?forum=asmxandxml
+            'http://www.avivroth.com/2013/05/02/rest-calls-in-net-c-over-ssl-https/
+            Dim response As System.Net.HttpWebResponse = test.GetResponse()
             If response.StatusCode = System.Net.HttpStatusCode.OK Then
                 Dim stream As System.IO.Stream = response.GetResponseStream()
                 Dim IOreader As New System.IO.StreamReader(stream)
@@ -163,9 +103,11 @@ Module Module1
                     xmlreader.ReadToFollowing("<duration>")
                     xmlreader.MoveToNextAttribute()
                     Dim time As String = xmlreader.Value
-                    output.AppendLine("It will take: " & time & " to get to " & finish)
-                    output.AppendLine("This is: " & ((CInt(time)) \ 360) & " hours and " & ((CInt(time)) Mod 360) & "minutes")
+                    output.AppendLine("It will take: " & time & " to get to Manchester")                                                           'outputs the length of time as stored in seconds to get to the final destination
+                    output.AppendLine("This is: " & ((CInt(time)) \ 360) & " hours and " & ((CInt(time)) Mod 360) & "minutes")      'outputs the time in minutes and seconds (hopefully)
                 End Using
+            Else
+                Console.WriteLine("Request bad, problem with webrequest or URL")
             End If
         End Using
         Return output
