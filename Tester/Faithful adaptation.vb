@@ -1,32 +1,30 @@
 ﻿Module Faithful_adaptation
 
-    Public Sub Faith_Permute(n As Integer, ByRef nodes As List(Of String))
+    Public Sub Faith_Permute(ByVal n As Integer, ByRef nodes As List(Of String), ByVal End_dest As Boolean)
         'Generate, count and print (if printem is not false) all permutations of first n integers
-
-        Dim P() As Integer
+        Dim P(n - 1) As Integer
         Dim t As Integer, i As Integer, j As Integer, k As Integer
         Dim count As Long
         Dim Last As Boolean
 
-
-
-        'Initialize
-        ReDim P(n)
-
-        For i = 1 To n
+        For i = 0 To n - 1
             P(i) = i
         Next
+
+        If End_dest = True Then
+            n -= 1
+        End If
 
         count = 0
         Last = False
 
         Do While Not Last
-            Print_array(P, n, nodes)
+            Print_array(P, n, nodes, End_dest)
 
             count = count + 1
 
             Last = True
-            i = n - 1
+            i = n - 2
 
             Do While i > 0
 
@@ -41,7 +39,7 @@
             Loop
 
             j = i + 1
-            k = n
+            k = n - 1
 
             While j < k
                 ' Swap p(j) and p(k)
@@ -52,7 +50,7 @@
                 k = k - 1
             End While
 
-            j = n
+            j = n - 1
 
             While P(j) > P(i)
                 j = j - 1
@@ -64,13 +62,15 @@
             P(i) = P(j)
             P(j) = t
         Loop 'While not last
-        Console.WriteLine("Hi there")
         Console.WriteLine("Number of permutations: " & count)
 
     End Sub
 
-    Public Sub Print_array(ByRef array() As Integer, ByVal length As Integer, ByRef nodes As List(Of String))
-        For t = 1 To length
+    Public Sub Print_array(ByRef array() As Integer, ByVal length As Integer, ByRef nodes As List(Of String), ByVal end_dest As Boolean)
+        If end_dest = True Then
+            length += 1
+        End If
+        For t = 0 To length - 1
             Console.Write(array(t) & ": " & nodes.Item(array(t)) & ", ")
         Next
         Console.WriteLine()

@@ -52,7 +52,7 @@ Module Module1
         Console.Clear()
         List_print(node_list, False)
 
-        Faith_Permute(node_list.Count, node_list)
+        Faith_Permute(node_list.Count, node_list, cont)
         Console.ReadLine()
     End Sub
 
@@ -79,71 +79,6 @@ Module Module1
         Return nodes
     End Function
 
-
-    Public Function Bruteforce(ByRef nodes As List(Of String), ByVal final As Boolean)
-        'https://rosettacode.org/wiki/Permutations#VBA
-        Dim pointers(nodes.Count - 1) As Integer
-        Dim t As Integer
-        Dim i As Integer
-        Dim j As Integer
-        Dim k As Integer
-        Dim count As Long
-        Dim Last As Boolean
-        Dim length As Integer = nodes.Count - 1
-        'Initialize
-        For o As Integer = 1 To length
-            pointers(o) = o
-            Console.Write(o & ", ")
-        Next
-        Console.WriteLine()
-        count = 0
-        Last = False
-        Do While Not Last
-            Print_arrangement(pointers, nodes)
-            count = count + 1
-            Last = True
-            i = length - 1
-
-            Do While i > 0    'orig was Do while i > 0
-                If pointers(i) < pointers(i + 1) Then
-                    Last = False
-                    Exit Do
-                End If
-
-                i = i - 1
-            Loop
-
-            j = i + 1    'orig was j = i +1
-            k = length       'orig was k = length
-            While j < k
-                ' Swap p(j) and p(k)
-                t = pointers(j)
-                pointers(j) = pointers(k)
-                pointers(k) = t
-                j = j + 1
-                k = k - 1
-            End While
-            j = length   'orig was j = length
-            While pointers(j) > pointers(i)
-                j = j - 1       'orig was j = j -1
-            End While
-            j = j + 1 'orig was j = j + 1
-
-            'Swap p(i) and p(j)
-
-            t = pointers(i)
-            pointers(i) = pointers(j)
-            pointers(j) = t
-
-            Console.WriteLine(count)
-            Console.WriteLine()
-        Loop 'While not last
-
-        'Debug.Print "Number of permutations: "; count
-        Console.WriteLine(count)
-        Console.ReadLine()
-        Return Nothing
-    End Function
 
     'Sub Permute(n As Integer, ByRef nodes As List(Of String))
     '    'Generate, count and print (if printem is not false) all permutations of first n integers
