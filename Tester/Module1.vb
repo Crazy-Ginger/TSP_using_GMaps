@@ -89,6 +89,7 @@ Module Module1
         Dim request As System.Net.HttpWebRequest = System.Net.HttpWebRequest.Create("https://maps.googleapis.com/maps/api/directions/xml?origin=HD22EB&destination=Manchester&key=AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w")
         Dim test As System.Net.HttpWebRequest = System.Net.HttpWebRequest.Create("https://google.co.uk")
         'https://msdn.microsoft.com/en-us/library/system.xml.xmlreader(v=vs.110).aspx
+        'https://developers.google.com/maps/documentation/directions/intro
 
         Using client = New WebClient()
             'https://social.msdn.microsoft.com/Forums/en-US/057094d9-47b4-4670-904b-c58bc320d52b/the-underlying-connection-was-closed-unable-to-connect-to-the-remote-server?forum=asmxandxml
