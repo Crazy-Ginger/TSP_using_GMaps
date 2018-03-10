@@ -17,6 +17,7 @@
 
         count = 0
         Last = False
+        Dim watch As Stopwatch = Stopwatch.StartNew()
 
         Do While Not Last
             Print_array(P, n, nodes, End_dest)
@@ -62,7 +63,8 @@
             P(i) = P(j)
             P(j) = t
         Loop 'While not last
-        Console.WriteLine("Number of permutations: " & count)
+        watch.Stop()
+        Console.WriteLine("Number of permutations: " & count & vbTab & "That was: " & watch.Elapsed.TotalMilliseconds & "ms, " & watch.ElapsedTicks & " ticks")
 
     End Sub
 

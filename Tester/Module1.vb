@@ -5,6 +5,7 @@ Imports System.Text
 Imports System.Data
 Imports System.Threading
 Imports System.Xml
+Imports Newtonsoft.Json
 
 Public Class Node
     Public address As String
@@ -16,8 +17,8 @@ Module Module1
     Sub Main()
         Dim latLngKey As String = "AIzaSyA3A7tDgpFISYEY3B5qYdXm9StRa0pJkcA"
         Dim waypointkey As String = "AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w"
-        Waypointing()
-        Console.ReadLine()
+        'Waypointing()
+        'Console.ReadLine()
         Dim node_list As New List(Of String)
         'Dim nodel As New Node
         Dim cont As Boolean = True
@@ -88,9 +89,11 @@ Module Module1
         Dim request As System.Net.HttpWebRequest = System.Net.HttpWebRequest.Create("https://maps.googleapis.com/maps/api/directions/xml?origin=HD22EB&destination=Manchester&key=AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w")
         Dim test As System.Net.HttpWebRequest = System.Net.HttpWebRequest.Create("https://google.co.uk")
         'https://msdn.microsoft.com/en-us/library/system.xml.xmlreader(v=vs.110).aspx
+
         Using client = New WebClient()
             'https://social.msdn.microsoft.com/Forums/en-US/057094d9-47b4-4670-904b-c58bc320d52b/the-underlying-connection-was-closed-unable-to-connect-to-the-remote-server?forum=asmxandxml
             'http://www.avivroth.com/2013/05/02/rest-calls-in-net-c-over-ssl-https/
+
             Dim response As System.Net.HttpWebResponse = test.GetResponse()
             If response.StatusCode = System.Net.HttpStatusCode.OK Then
                 Dim stream As System.IO.Stream = response.GetResponseStream()
