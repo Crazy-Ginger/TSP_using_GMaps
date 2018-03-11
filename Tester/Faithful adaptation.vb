@@ -72,9 +72,10 @@
         If end_dest = True Then
             length += 1
         End If
-        For t = 0 To length - 1
+        For t As Integer = 0 To length - 1
             Console.Write(array(t) & ": " & nodes.Item(array(t)) & ", ")
         Next
         Console.WriteLine()
+        Waypointing(array, length, nodes)
     End Sub
 End Module

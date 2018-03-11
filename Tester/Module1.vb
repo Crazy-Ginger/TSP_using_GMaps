@@ -16,9 +16,6 @@ Module Module1
 
     Sub Main()
         Dim latLngKey As String = "AIzaSyA3A7tDgpFISYEY3B5qYdXm9StRa0pJkcA"
-        Dim waypointkey As String = "AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w"
-        'Waypointing()
-        'Console.ReadLine()
         Dim node_list As New List(Of String)
         'Dim nodel As New Node
         Dim cont As Boolean = True
@@ -82,55 +79,35 @@ Module Module1
     End Function
 
 
-    Function Waypointing() 'ByVal start As String, ByVal finish As String, ByVal key As String
-        Dim output As StringBuilder = New StringBuilder()
+    Function Waypointing(ByRef array() As Integer, ByVal length As String, ByRef nodes As List(Of String))
+        'Builds request string
+        Dim waypointkey As String = "AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w"
+        Dim request As String = "https://maps.googleapis.com/maps/api/directions/json?origin="
+        request += nodes.Item(0)
+        request += "&destination=" & nodes.Item(array(length - 1)) & "&waypoints="
+        For t As Integer = 1 To length - 2
+            request += "via:" & nodes.Item(array(t)) & "|"
+        Next
+        request += "&key=" & waypointkey
+        Console.WriteLine(request)
 
-        'Dim request As System.Net.HttpWebRequest = System.Net.HttpWebRequest.Create("https://maps.googleapis.com/maps/api/directions/xml?origin=" & start & "&destination=" & finish & "&key=" & key)
-        Dim request As System.Net.HttpWebRequest = System.Net.HttpWebRequest.Create("https://maps.googleapis.com/maps/api/directions/xml?origin=HD22EB&destination=Manchester&key=AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w")
-        Dim test As System.Net.HttpWebRequest = System.Net.HttpWebRequest.Create("https://google.co.uk")
-        'https://msdn.microsoft.com/en-us/library/system.xml.xmlreader(v=vs.110).aspx
-        'https://developers.google.com/maps/documentation/directions/intro
+        Dim connected As Boolean = False
+        ''https://msdn.microsoft.com/en-us/library/system.xml.xmlreader(v=vs.110).aspx
+        ''https://developers.google.com/maps/documentation/directions/intro
 
-        Using client = New WebClient()
-            'https://social.msdn.microsoft.com/Forums/en-US/057094d9-47b4-4670-904b-c58bc320d52b/the-underlying-connection-was-closed-unable-to-connect-to-the-remote-server?forum=asmxandxml
-            'http://www.avivroth.com/2013/05/02/rest-calls-in-net-c-over-ssl-https/
-
-            Dim response As System.Net.HttpWebResponse = test.GetResponse()
-            If response.StatusCode = System.Net.HttpStatusCode.OK Then
-                Dim stream As System.IO.Stream = response.GetResponseStream()
-                Dim IOreader As New System.IO.StreamReader(stream)
-                Dim contents As String = IOreader.ReadToEnd()
-                Dim xmldoc As New System.Xml.XmlDocument()
-                xmldoc.LoadXml(contents)
-
-                Using xmlreader As XmlReader = XmlReader.Create(contents)
-                    xmlreader.ReadToFollowing("<duration>")
-                    xmlreader.MoveToNextAttribute()
-                    Dim time As String = xmlreader.Value
-                    output.AppendLine("It will take: " & time & " to get to Manchester")                                                           'outputs the length of time as stored in seconds to get to the final destination
-                    output.AppendLine("This is: " & ((CInt(time)) \ 360) & " hours and " & ((CInt(time)) Mod 360) & "minutes")      'outputs the time in minutes and seconds (hopefully)
-                End Using
-            Else
-                Console.WriteLine("Request bad, problem with webrequest or URL")
-            End If
-        End Using
-        Return output
-    End Function
-
-
-    Sub MyHandler(sender As Object, args As UnhandledExceptionEventArgs)
-        Dim e As Exception = DirectCast(args.ExceptionObject, Exception)
-        Console.WriteLine("MyHandler caught : " + e.Message)
-        Console.WriteLine("Runtime terminating: {0}", args.IsTerminating)
-    End Sub
-
-
-    Function Connected(website) As Boolean
         Try
-            Return My.Computer.Network.Ping(website)
+            Using client = New WebClient()
+                Using Stream = client.OpenRead(request)
+                    connected = True
+                End Using
+            End Using
         Catch
-            Return False
+            connected = False
         End Try
+        Console.WriteLine(connected)
+
+
+        Return Nothing
     End Function
 
 
