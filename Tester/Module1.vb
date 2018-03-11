@@ -7,11 +7,6 @@ Imports System.Threading
 Imports System.Xml
 Imports Newtonsoft.Json
 
-Public Class Node
-    Public address As String
-    Public original As Integer
-End Class
-
 Module Module1
 
     Sub Main()
