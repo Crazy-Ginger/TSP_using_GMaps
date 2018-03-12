@@ -4,30 +4,25 @@ Imports System.Net
 Imports System.Text
 Imports System.Data
 Imports System.Threading
-Imports System.Xml
 Imports Newtonsoft.Json
+Imports Newtonsoft.Json.Linq
+Imports System.Text.RegularExpressions
+
 
 Module Module1
 
     Sub Main()
         Dim latLngKey As String = "AIzaSyA3A7tDgpFISYEY3B5qYdXm9StRa0pJkcA"
         Dim node_list As New List(Of String)
-        'Dim nodel As New Node
         Dim cont As Boolean = True
 
         Console.Write("Your first destination: ")
-        'nodel.address = Console.ReadLine()
-        'nodel.original = node_list.Count
-        'node_list.Add(nodel)
         node_list.Add(Console.ReadLine())
 
         List_print(node_list, True)
 
         While cont = True Or node_list.Count < 2
-            Dim nodeel As New Node
             Console.Write("Next destination: ")
-            'nodeel.address = Console.ReadLine()
-            'nodeel.original = node_list.Count
             node_list.Add(Console.ReadLine())
 
             List_print(node_list, True)
@@ -40,7 +35,6 @@ Module Module1
         cont = Console.ReadLine()
         If cont = True Then
             Console.Write("Final destination: ")
-            'Dim nodeel As New Node
             node_list.Add(Console.ReadLine())
         End If
         Console.Clear()
@@ -86,14 +80,15 @@ Module Module1
         request += "&key=" & waypointkey
         Console.WriteLine(request)
 
-        Dim connected As Boolean = False
         ''https://msdn.microsoft.com/en-us/library/system.xml.xmlreader(v=vs.110).aspx
         ''https://developers.google.com/maps/documentation/directions/intro
 
-        Try
+        'determines whether the request string is valid and connects to the webserver
+        Dim connected As Boolean = False        'variable to test connection
+        Try                                                   'test if the created url responds and won't throw an error if it doesn't
             Using client = New WebClient()
                 Using Stream = client.OpenRead(request)
-                    connected = True
+                    connected = True                    'if there is a connection the variable is changed so that the program will try and pull the data
                 End Using
             End Using
         Catch
@@ -101,6 +96,12 @@ Module Module1
         End Try
         Console.WriteLine(connected)
 
+        'pulls the GEOJSON data
+        If connected = True Then
+
+        Else
+            Console.WriteLine("Did not retrieve any usable information or your addresses are invalide. Better luck next time.")
+        End If
 
         Return Nothing
     End Function
