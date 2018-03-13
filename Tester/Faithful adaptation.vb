@@ -1,18 +1,21 @@
 ﻿Module Faithful_adaptation
 
-    Public Sub Faith_Permute(ByVal n As Integer, ByRef nodes As List(Of String), ByVal End_dest As Boolean)
+    Public Sub Faith_Permute(ByVal length As Integer, ByRef nodes As List(Of String), ByVal End_dest As Boolean)
         'Generate, count and print (if printem is not false) all permutations of first n integers
-        Dim P(n - 1) As Integer
-        Dim t As Integer, i As Integer, j As Integer, k As Integer
+        Dim P(length - 1) As Integer
+        Dim swapper As Integer
+        Dim initial_comp As Integer
+        Dim rearrange As Integer
+        Dim swap_rearrange As Integer
         Dim count As Long
         Dim Last As Boolean
 
-        For i = 0 To n - 1
+        For i = 0 To length - 1
             P(i) = i
         Next
 
         If End_dest = True Then
-            n -= 1
+            length -= 1
         End If
 
         count = 0
@@ -20,48 +23,48 @@
         Dim watch As Stopwatch = Stopwatch.StartNew()
 
         Do While Not Last
-            Print_array(P, n, nodes, End_dest)
+            Print_array(P, length, nodes, End_dest)
 
             count = count + 1
 
             Last = True
-            i = n - 2
+            initial_comp = length - 2
 
-            Do While i > 0
+            Do While initial_comp > 0
 
-                If P(i) < P(i + 1) Then
+                If P(initial_comp) < P(initial_comp + 1) Then
 
                     Last = False
                     Exit Do
 
                 End If
 
-                i = i - 1
+                initial_comp = initial_comp - 1
             Loop
 
-            j = i + 1
-            k = n - 1
+            rearrange = initial_comp + 1
+            swap_rearrange = length - 1
 
-            While j < k
+            While rearrange < swap_rearrange
                 ' Swap p(j) and p(k)
-                t = P(j)
-                P(j) = P(k)
-                P(k) = t
-                j = j + 1
-                k = k - 1
+                swapper = P(rearrange)
+                P(rearrange) = P(swap_rearrange)
+                P(swap_rearrange) = swapper
+                rearrange = rearrange + 1
+                swap_rearrange = swap_rearrange - 1
             End While
 
-            j = n - 1
+            rearrange = length - 1
 
-            While P(j) > P(i)
-                j = j - 1
+            While P(rearrange) > P(initial_comp)
+                rearrange = rearrange - 1
             End While
 
-            j = j + 1
+            rearrange = rearrange + 1
             'Swap p(i) and p(j)
-            t = P(i)
-            P(i) = P(j)
-            P(j) = t
+            swapper = P(initial_comp)
+            P(initial_comp) = P(rearrange)
+            P(rearrange) = swapper
         Loop 'While not last
         watch.Stop()
         Console.WriteLine("Number of permutations: " & count & vbTab & "That was: " & watch.Elapsed.TotalMilliseconds & "ms, " & watch.ElapsedTicks & " ticks")
