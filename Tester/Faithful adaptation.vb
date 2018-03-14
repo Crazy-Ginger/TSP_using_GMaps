@@ -6,7 +6,7 @@
         Dim swapper As Integer
         Dim initial_comp As Integer
         Dim rearrange As Integer
-        Dim swap_rearrange As Integer
+        Dim asc_swapper As Integer
         Dim count As Long
         Dim Last As Boolean
 
@@ -31,27 +31,23 @@
             initial_comp = length - 2
 
             Do While initial_comp > 0
-
                 If P(initial_comp) < P(initial_comp + 1) Then
-
                     Last = False
                     Exit Do
-
                 End If
-
                 initial_comp = initial_comp - 1
             Loop
 
             rearrange = initial_comp + 1
-            swap_rearrange = length - 1
+            asc_swapper = length - 1
 
-            While rearrange < swap_rearrange
+            While rearrange < asc_swapper
                 ' Swap p(j) and p(k)
                 swapper = P(rearrange)
-                P(rearrange) = P(swap_rearrange)
-                P(swap_rearrange) = swapper
-                rearrange = rearrange + 1
-                swap_rearrange = swap_rearrange - 1
+                P(rearrange) = P(asc_swapper)
+                P(asc_swapper) = swapper
+                rearrange += 1
+                asc_swapper -= 1
             End While
 
             rearrange = length - 1
@@ -61,7 +57,8 @@
             End While
 
             rearrange = rearrange + 1
-            'Swap p(i) and p(j)
+
+            'makes the swap to place the large number in front
             swapper = P(initial_comp)
             P(initial_comp) = P(rearrange)
             P(rearrange) = swapper
