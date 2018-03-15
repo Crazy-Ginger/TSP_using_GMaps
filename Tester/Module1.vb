@@ -71,14 +71,14 @@ Module Module1
     Function Waypointing(ByRef array() As Integer, ByVal length As String, ByRef nodes As List(Of String))
         'Builds request string
         Dim waypointkey As String = "AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w"
-        Dim request As String = "https://maps.googleapis.com/maps/api/directions/json?origin="
-        request += nodes.Item(0)
-        request += "&destination=" & nodes.Item(array(length - 1)) & "&waypoints="
+        Dim request_url As String = "https://maps.googleapis.com/maps/api/directions/json?origin="
+        request_url += nodes.Item(0)
+        request_url += "&destination=" & nodes.Item(array(length - 1)) & "&waypoints="
         For t As Integer = 1 To length - 2
-            request += "via:" & nodes.Item(array(t)) & "|"
+            request_url += "via:" & nodes.Item(array(t)) & "|"
         Next
-        request += "&key=" & waypointkey
-        Console.WriteLine(request)
+        request_url += "&key=" & waypointkey
+        Console.WriteLine(request_url)
 
         ''https://msdn.microsoft.com/en-us/library/system.xml.xmlreader(v=vs.110).aspx
         ''https://developers.google.com/maps/documentation/directions/intro
@@ -87,7 +87,7 @@ Module Module1
         Dim connected As Boolean = False        'variable to test connection
         Try                                                   'test if the created url responds and won't throw an error if it doesn't
             Using client = New WebClient()
-                Using Stream = client.OpenRead(request)
+                Using Stream = client.OpenRead(request_url)
                     connected = True                    'if there is a connection the variable is changed so that the program will try and pull the data
                 End Using
             End Using
@@ -96,9 +96,17 @@ Module Module1
         End Try
         Console.WriteLine(connected)
 
+
         'pulls the GEOJSON data
         If connected = True Then
+            Dim postdata As String
+            Dim request As WebRequest = WebRequest.Create(request_url)
+            request.Method = "POST"
 
+            Dim datastream As Stream = request.GetRequestStream()
+            datastream.Write()
+
+            Dim json As String = responsefromserver
         Else
             Console.WriteLine("Did not retrieve any usable information or your addresses are invalide. Better luck next time.")
         End If
