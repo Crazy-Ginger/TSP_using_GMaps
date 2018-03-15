@@ -102,11 +102,27 @@ Module Module1
             Dim postdata As String
             Dim request As WebRequest = WebRequest.Create(request_url)
             request.Method = "POST"
-
+            Dim data As Byte() = Nothing
             Dim datastream As Stream = request.GetRequestStream()
-            datastream.Write()
+            datastream.Write(data, 0, data.Length)
+            datastream.Close()
 
-            Dim json As String = responsefromserver
+            Dim response As WebResponse = request.GetResponse()
+            datastream = response.GetResponseStream()
+            Dim reader As New StreamReader(datastream)
+            Dim responsefromServer As String = reader.ReadToEnd()
+
+            Dim json As String = responsefromServer
+            Dim ser As JObject = JObject.Parse(json)
+            Dim GEOJSON_data As List(Of JToken) = ser.Children().ToList
+
+            For Each item As JProperty In data
+                item.CreateReader()
+                Select Case item.Name
+                    Case ""
+
+                End Select
+            Next
         Else
             Console.WriteLine("Did not retrieve any usable information or your addresses are invalide. Better luck next time.")
         End If
