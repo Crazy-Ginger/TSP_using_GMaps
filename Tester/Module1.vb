@@ -10,7 +10,6 @@ Imports System.Text.RegularExpressions
 
 
 Module Module1
-
     Sub Main()
         Dim latLngKey As String = "AIzaSyA3A7tDgpFISYEY3B5qYdXm9StRa0pJkcA"
         Dim node_list As New List(Of String)
@@ -99,34 +98,28 @@ Module Module1
 
         'pulls the GEOJSON data
         If connected = True Then
-            Dim postdata As String
-            Dim request As WebRequest = WebRequest.Create(request_url)
+            Dim request As HttpWebRequest = WebRequest.Create(request_url)
             request.Method = "POST"
             Dim data As Byte() = Nothing
             Dim datastream As Stream = request.GetRequestStream()
-            datastream.Write(data, 0, data.Length)
-            datastream.Close()
 
             Dim response As WebResponse = request.GetResponse()
             datastream = response.GetResponseStream()
             Dim reader As New StreamReader(datastream)
             Dim responsefromServer As String = reader.ReadToEnd()
 
-            Dim json As String = responsefromServer
-            Dim ser As JObject = JObject.Parse(json)
-            Dim GEOJSON_data As List(Of JToken) = ser.Children().ToList
+            Dim Server_JSON As String = responsefromServer
+            'Dim ser As JObject = JObject.Parse(Server_JSON)
+            'Dim GEOJSON_data As List(Of JToken) = ser.Children().ToList
+            Dim distance As JSON_data.Distance = JsonConvert.DeserializeObject(Of JSON_data.Distance)(Server_JSON)
 
-            For Each item As JProperty In data
-                item.CreateReader()
-                Select Case item.Name
-                    Case ""
-
-                End Select
-            Next
+            Console.WriteLine(distance.text & vbTab & distance.value)
+            Dim duration As JSON_data.Duration = JsonConvert.DeserializeObject(Of JSON_data.Duration)(Server_JSON)
+            Console.WriteLine(duration.text & vbTab & distance.value)
         Else
             Console.WriteLine("Did not retrieve any usable information or your addresses are invalide. Better luck next time.")
         End If
-
+        Console.ReadLine()
         Return Nothing
     End Function
 
