@@ -1656,17 +1656,21 @@
 //  "status": "OK"
 //}
 {
-  "Response": [
-    {
-      "Height_ft": 2999.0,
-      "Height_m": 914.0,
-      "humidity": 0.81,
-      "ID": "c1",
-      "Latitude": 57.588007,
-      "Longitude": -5.5233564,
-      "Name": "Beinn Dearg",
-      "snowCover": 4.99,
-      "temperature": 63.0
-    }
+  "version": 0.3,
+  "status": 0,
+  "route_summary": {
+    "total_distance": 300,
+    "total_time": 14,
+    "start_point": "43",
+    "end_point": "42"
+  },
+  "route_geometry": [
+    [ 51.025421, 18.647631 ],
+    [ 51.026131, 18.6471 ],
+    [ 51.027802, 18.645639 ]
+  ],
+  "route_instructions": [
+    [ "Head northwest on 43", 88, 0, 4, "88 m", "NW", 334.8 ],
+    [ "Continue on 42", 212, 1, 10, "0.2 km", "NW", 331.1, "C", 356.3 ]
   ]
 }

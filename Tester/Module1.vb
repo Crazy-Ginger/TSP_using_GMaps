@@ -8,7 +8,6 @@ Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Linq
 Imports System.Text.RegularExpressions
 
-
 Module Module1
     Sub Main()
         Dim latLngKey As String = "AIzaSyA3A7tDgpFISYEY3B5qYdXm9StRa0pJkcA"
@@ -82,43 +81,22 @@ Module Module1
         ''https://msdn.microsoft.com/en-us/library/system.xml.xmlreader(v=vs.110).aspx
         ''https://developers.google.com/maps/documentation/directions/intro
 
-        'determines whether the request string is valid and connects to the webserver
-        Dim connected As Boolean = False        'variable to test connection
-        Try                                                   'test if the created url responds and won't throw an error if it doesn't
-            Using client = New WebClient()
-                Using Stream = client.OpenRead(request_url)
-                    connected = True                    'if there is a connection the variable is changed so that the program will try and pull the data
-                End Using
-            End Using
-        Catch
-            connected = False
-        End Try
-        Console.WriteLine(connected)
-
-
         'pulls the GEOJSON data
-        If connected = True Then
-            Dim request As HttpWebRequest = WebRequest.Create(request_url)
-            request.Method = "POST"
-            Dim data As Byte() = Nothing
-            Dim datastream As Stream = request.GetRequestStream()
+        Dim client As New WebClient()
+        Dim client_Stream As Stream = client.OpenRead(request_url)
+        Dim streamreading As New StreamReader(client_Stream)
 
-            Dim response As WebResponse = request.GetResponse()
-            datastream = response.GetResponseStream()
-            Dim reader As New StreamReader(datastream)
-            Dim responsefromServer As String = reader.ReadToEnd()
+        Dim Server_JSON As String = streamreading.ReadToEnd()
+        Console.WriteLine(Server_JSON)
+        Console.WriteLine(Server_JSON)
+        streamreading.Close()
+        'Dim ser As JObject = JObject.Parse(Server_JSON)
+        'Dim GEOJSON_data As List(Of JToken) = ser.Children().ToList
+        Dim distance As JSON_data.Distance = JsonConvert.DeserializeObject(Of JSON_data.Distance)(Server_JSON)
+        Console.WriteLine(distance.text & vbTab & distance.value)
+        Dim duration As JSON_data.Duration = JsonConvert.DeserializeObject(Of JSON_data.Duration)(Server_JSON)
+        Console.WriteLine(duration.text & vbTab & distance.value)
 
-            Dim Server_JSON As String = responsefromServer
-            'Dim ser As JObject = JObject.Parse(Server_JSON)
-            'Dim GEOJSON_data As List(Of JToken) = ser.Children().ToList
-            Dim distance As JSON_data.Distance = JsonConvert.DeserializeObject(Of JSON_data.Distance)(Server_JSON)
-
-            Console.WriteLine(distance.text & vbTab & distance.value)
-            Dim duration As JSON_data.Duration = JsonConvert.DeserializeObject(Of JSON_data.Duration)(Server_JSON)
-            Console.WriteLine(duration.text & vbTab & distance.value)
-        Else
-            Console.WriteLine("Did not retrieve any usable information or your addresses are invalide. Better luck next time.")
-        End If
         Console.ReadLine()
         Return Nothing
     End Function
