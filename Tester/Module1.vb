@@ -86,27 +86,18 @@ Module Module1
         Dim client_Stream As Stream = client.OpenRead(request_url)
         Dim streamreading As New StreamReader(client_Stream)
         Dim Server_JSON_str As String = streamreading.ReadToEnd()
+        streamreading.Close()
 
-        'Dim searcher As New StreamReader(Server_JSON_str)
-        Dim JSON_object As JSON_data.Rootobject = JsonConvert.DeserializeObject(Of JSON_data.Rootobject)(Server_JSON_str)
+        Dim jdata As JObject = JObject.Parse(Server_JSON_str)        'tries To make the JSON data Using JArray
+        Console.WriteLine(jdata.routes.legs.distance.text)
+        Console.WriteLine(jdata)
 
+        Dim toSearch As JObject = JObject.Parse(Server_JSON_str)
 
-        'While Not searcher.EndOfStream
-        '    Dim lines As String = searcher.ReadLine()
-        '    If lines.Contains("distance") Then
-        '        distance = searcher.ReadLine() & vbTab & searcher.ReadLine()
-
-        '    ElseIf lines.contains("duration") Then
-        '        duration = searcher.ReadLine() & vbTab & searcher.ReadLine()
-        '    End If
-        'End While
-        'searcher.Close()
-        Console.WriteLine(JSON_object.maindist_text & vbTab & JSON_object.maindist_value)
-        Console.WriteLine(JSON_object.maindura_text & vbTab & JSON_object.maindura_value)
+        'Dim JSON_object As List(Of JSON_data.Rootobject) = JsonConvert.DeserializeObject(Of List(Of JSON_data.Rootobject))(Server_JSON_str)    tries to take the JSON data and make it into an object based off JSON_data classes
 
         Console.ReadLine()
         Return Nothing
-        streamreading.Close()
     End Function
 
 
