@@ -85,20 +85,28 @@ Module Module1
         Dim client As New WebClient()
         Dim client_Stream As Stream = client.OpenRead(request_url)
         Dim streamreading As New StreamReader(client_Stream)
+        Dim Server_JSON_str As String = streamreading.ReadToEnd()
 
-        Dim Server_JSON As String = streamreading.ReadToEnd()
-        Console.WriteLine(Server_JSON)
-        Console.WriteLine(Server_JSON)
-        streamreading.Close()
-        'Dim ser As JObject = JObject.Parse(Server_JSON)
-        'Dim GEOJSON_data As List(Of JToken) = ser.Children().ToList
-        Dim distance As JSON_data.Distance = JsonConvert.DeserializeObject(Of JSON_data.Distance)(Server_JSON)
-        Console.WriteLine(distance.text & vbTab & distance.value)
-        Dim duration As JSON_data.Duration = JsonConvert.DeserializeObject(Of JSON_data.Duration)(Server_JSON)
-        Console.WriteLine(duration.text & vbTab & distance.value)
+        'Dim searcher As New StreamReader(Server_JSON_str)
+        Dim JSON_object As JSON_data.Rootobject = JsonConvert.DeserializeObject(Of JSON_data.Rootobject)(Server_JSON_str)
+
+
+        'While Not searcher.EndOfStream
+        '    Dim lines As String = searcher.ReadLine()
+        '    If lines.Contains("distance") Then
+        '        distance = searcher.ReadLine() & vbTab & searcher.ReadLine()
+
+        '    ElseIf lines.contains("duration") Then
+        '        duration = searcher.ReadLine() & vbTab & searcher.ReadLine()
+        '    End If
+        'End While
+        'searcher.Close()
+        Console.WriteLine(JSON_object.maindist_text & vbTab & JSON_object.maindist_value)
+        Console.WriteLine(JSON_object.maindura_text & vbTab & JSON_object.maindura_value)
 
         Console.ReadLine()
         Return Nothing
+        streamreading.Close()
     End Function
 
 
