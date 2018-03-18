@@ -76,28 +76,58 @@ Module Module1
             request_url += "via:" & nodes.Item(array(t)) & "|"
         Next
         request_url += "&key=" & waypointkey
-        Console.WriteLine(request_url)
 
-        ''https://msdn.microsoft.com/en-us/library/system.xml.xmlreader(v=vs.110).aspx
-        ''https://developers.google.com/maps/documentation/directions/intro
-
-        'pulls the GEOJSON data
+        'pulls the GEOJSON data and puts it into a string
         Dim client As New WebClient()
         Dim client_Stream As Stream = client.OpenRead(request_url)
         Dim streamreading As New StreamReader(client_Stream)
         Dim Server_JSON_str As String = streamreading.ReadToEnd()
         streamreading.Close()
 
-        Dim jdata As JObject = JObject.Parse(Server_JSON_str)        'tries To make the JSON data Using JArray
-        Console.WriteLine(jdata.routes.legs.distance.text)
-        Console.WriteLine(jdata)
+        'tries To make the JSON data Using JObject (did't know how to search the JObject for useful data
+        'Dim jdata As JObject = JObject.Parse(Server_JSON_str)
 
-        Dim toSearch As JObject = JObject.Parse(Server_JSON_str)
 
-        'Dim JSON_object As List(Of JSON_data.Rootobject) = JsonConvert.DeserializeObject(Of List(Of JSON_data.Rootobject))(Server_JSON_str)    tries to take the JSON data and make it into an object based off JSON_data classes
+        'searches for a key phrase then retrieves the value associated with the key phrase
+        'finds the physical length of the journey
+        Dim search_dist As String = "distance"
+        Dim dist_char As Integer = Server_JSON_str.IndexOf(search_dist)
+        Console.WriteLine(dist_char)
+        dist_char = Server_JSON_str.IndexOf("value")
+        dist_char += 9
+        Dim dist_converter As String = ""
+        For i As Integer = dist_char To Server_JSON_str.Length
+            If Server_JSON_str.Substring(i, 1) = " " Then
+                Exit For
+            Else
+                dist_converter += Server_JSON_str.Substring(i, 1)
+            End If
+        Next
+        Dim distance As Integer = CInt(dist_converter)
 
-        Console.ReadLine()
-        Return Nothing
+        'finds the time length of the journey
+        Dim damaged_JSON As String = Right(Server_JSON_str, Server_JSON_str.Length - dist_char)
+        Dim search_dura As String = "duration"
+        Dim dura_char As Integer = damaged_JSON.IndexOf(search_dura)
+        Console.WriteLine(dura_char)
+        dura_char = damaged_JSON.IndexOf("value")
+        dura_char += 9
+        Dim dura_converter As String = ""
+        For i As Integer = dura_char To damaged_JSON.Length
+            If damaged_JSON.Substring(i, 1) = " " Then
+                Exit For
+            Else
+                dura_converter += damaged_JSON.Substring(i, 1)
+            End If
+        Next
+        Dim duration As Integer = Integer.Parse(dura_converter)
+
+        'tried to make this convert the string from the website to a class to make getting data really easily
+        'Dim JSON_object As List(Of JSON_data.Rootobject) = JsonConvert.DeserializeObject(Of List(Of JSON_data.Rootobject))(Server_JSON_str)
+
+        Console.WriteLine("Distance: " & distance & " (m)")
+        Console.WriteLine("Duration: " & duration & " (s)" & vbTab & Math.Floor(duration / 3600) & " hours  " & Math.Round((duration Mod 3600) / 60) & " minutes")
+        Return distance And duration
     End Function
 
 
