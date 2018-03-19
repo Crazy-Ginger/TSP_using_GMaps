@@ -70,15 +70,26 @@ Module Module1
     End Function
 
 
-    Public Function Approximation(ByVal length As Integer, ByVal nodes As List(Of String))
-        Dim order(length - 1) As String
-        Dim nodesLeft As Integer = length - 1
-        Dim currentNode As String = nodes.Item(0)
-        For i As Integer = 0 To nodesLeft
-            Dim shortestRoute As Integer = 2147483647
-
+    Public Function Approximation(ByVal nodes As List(Of String), ByVal last As Boolean)
+        Dim length As Integer = nodes.Count - 1
+        If last = True Then
+            length -= 1
+        End If
+        Dim final_order As New Shorter
+        Dim pointers As New List(Of Integer)
+        For i As Integer = 0 To length
+            pointers.Add(i)
         Next
-        Return nodes
+        final_order.nodes.Add(nodes.Item(0))
+        pointers.Remove(0)
+
+        For i As Integer = 0 To length
+
+            Dim request_url As String = "https://maps.googleapis.com/maps/api/directions/json?origin="
+            request_url += nodes.Item(0)
+            request_url += "&destination=" & nodes.Item(i)
+        Next
+        Return Nothing
     End Function
 
 
