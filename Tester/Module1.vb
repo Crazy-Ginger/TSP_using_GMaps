@@ -11,13 +11,15 @@ Imports System.Text.RegularExpressions
 Public Class Shorter
     Public distance As Integer
     Public duration As Integer
-    Public nodes As List(Of Integer)
+    Public nodes As New List(Of Integer)
 End Class
 
 Module Module1
     Public shortest As New Shorter
+
     Sub Main()
         shortest.distance = 2147483646
+        shortest.duration = 0
         'Dim latLngKey As String = "AIzaSyA3A7tDgpFISYEY3B5qYdXm9StRa0pJkcA"
         Dim node_list As New List(Of String)
         Dim cont As Boolean = True
@@ -48,9 +50,6 @@ Module Module1
 
         Faith_Permute(node_list.Count, node_list, cont)
 
-        For t As Integer = 0 To shortest.nodes.Count - 1
-            '    Console.Write(Array(t) & ": " & Nodes.Item(Array(t)) & ", ")
-        Next
         Console.ReadLine()
     End Sub
 
@@ -88,13 +87,13 @@ Module Module1
         For t As Integer = 1 To length - 2
             request_url += "via:" & nodes.Item(array(t)) & "|"
         Next
+
         Console.WriteLine()
         ' request_url += "&key=" & waypointkey
 
         'pulls the GEOJSON data and puts it into a string
-        Console.WriteLine(request_url)
-        Dim client As New WebClient()
-        Dim sucess As Boolean = False
+        'Console.WriteLine(request_url)
+
         'Try
         '    Dim test_stream As Stream = client.OpenRead(request_url)
         '    Console.WriteLine("It worked inside the try")
@@ -103,7 +102,7 @@ Module Module1
         '    sucess = False
         '    Console.WriteLine("It did't work")
         'End Try
-        'If sucess = True Then
+        Dim client As New WebClient()
         Dim client_Stream As Stream = client.OpenRead(request_url)
         Dim streamreading As New StreamReader(client_Stream)
         Dim Server_JSON_str As String = streamreading.ReadToEnd()
@@ -117,7 +116,7 @@ Module Module1
         'finds the physical length of the journey
         Dim search_dist As String = "distance"
         Dim dist_char As Integer = Server_JSON_str.IndexOf(search_dist)
-        'Console.WriteLine(dist_char)
+
         dist_char = Server_JSON_str.IndexOf("value")
         dist_char += 9
         Dim dist_converter As String = ""
@@ -128,6 +127,7 @@ Module Module1
                 dist_converter += Server_JSON_str.Substring(i, 1)
             End If
         Next
+        Console.WriteLine(dist_converter)
         Dim distance As Integer = CInt(dist_converter)
 
         'finds the time length of the journey
@@ -175,6 +175,7 @@ Module Module1
         'Fills the array with pointers that can be sorted
         For i = 0 To length - 1
             P(i) = i
+            shortest.nodes.Add(i)
         Next
         'Checks if there is a set end point that should not be shuffled
         If End_dest = True Then
@@ -241,18 +242,20 @@ Module Module1
             Console.Write(array(t) & ": " & nodes.Item(array(t)) & ", ")
         Next
 
-        Dim test() As Integer = Waypointing(array, length, nodes)   'sends this to the function that should return the length/duration of the route
+        Dim dist_dura() As Integer = Waypointing(array, length, nodes)   'sends this to the function that should return the length/duration of the route
 
-        Dim temp_dist As Integer = test(0)  'takes the returned data and saves it locally
-        Dim temp_dura As Integer = test(1)
 
-        If temp_dist < shortest.distance Then   'compares the existing shortest route with the current one
-            shortest.distance = temp_dist
-            shortest.distance = temp_dura
-            For i As Integer = 0 To array.Length
-                shortest.nodes.Add(array(i))
+        If dist_dura(0) < shortest.distance Then   'compares the existing shortest route with the current one
+            shortest.distance = dist_dura(0)
+            shortest.duration = dist_dura(1)
+            For i As Integer = 0 To array.Length - 1
+                shortest.nodes.Item(i) = array(i)
             Next
+        Else
+
         End If
+        Console.WriteLine("Shortest: " & shortest.distance)
+        Console.WriteLine()
     End Sub
 
 
