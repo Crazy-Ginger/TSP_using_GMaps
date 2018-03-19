@@ -95,95 +95,71 @@ Module Module1
         Console.WriteLine(request_url)
         Dim client As New WebClient()
         Dim sucess As Boolean = False
-        Try
-            Dim test_stream As Stream = client.OpenRead(request_url)
-            Console.WriteLine("It worked inside the try")
-            sucess = True
-        Catch ex As Exception
-            sucess = False
-            Console.WriteLine("It did't work")
-        End Try
-        If sucess = True Then
-            Dim client_Stream As Stream = client.OpenRead(request_url)
-            Dim streamreading As New StreamReader(client_Stream)
-            Dim Server_JSON_str As String = streamreading.ReadToEnd()
-            streamreading.Close()
+        'Try
+        '    Dim test_stream As Stream = client.OpenRead(request_url)
+        '    Console.WriteLine("It worked inside the try")
+        '    sucess = True
+        'Catch ex As Exception
+        '    sucess = False
+        '    Console.WriteLine("It did't work")
+        'End Try
+        'If sucess = True Then
+        Dim client_Stream As Stream = client.OpenRead(request_url)
+        Dim streamreading As New StreamReader(client_Stream)
+        Dim Server_JSON_str As String = streamreading.ReadToEnd()
+        streamreading.Close()
 
-            'tries To make the JSON data Using JObject (did't know how to search the JObject for useful data
-            'Dim jdata As JObject = JObject.Parse(Server_JSON_str)
+        'tries To make the JSON data Using JObject (did't know how to search the JObject for useful data
+        'Dim jdata As JObject = JObject.Parse(Server_JSON_str)
 
 
-            'searches for a key phrase then retrieves the value associated with the key phrase
-            'finds the physical length of the journey
-            Dim search_dist As String = "distance"
-            Dim dist_char As Integer = Server_JSON_str.IndexOf(search_dist)
-            Console.WriteLine(dist_char)
-            dist_char = Server_JSON_str.IndexOf("value")
-            dist_char += 9
-            Dim dist_converter As String = ""
-            For i As Integer = dist_char To Server_JSON_str.Length
-                If Server_JSON_str.Substring(i, 1) = " " Then
-                    Exit For
-                Else
-                    dist_converter += Server_JSON_str.Substring(i, 1)
-                End If
-            Next
-            Dim distance As Integer = CInt(dist_converter)
+        'searches for a key phrase then retrieves the value associated with the key phrase
+        'finds the physical length of the journey
+        Dim search_dist As String = "distance"
+        Dim dist_char As Integer = Server_JSON_str.IndexOf(search_dist)
+        'Console.WriteLine(dist_char)
+        dist_char = Server_JSON_str.IndexOf("value")
+        dist_char += 9
+        Dim dist_converter As String = ""
+        For i As Integer = dist_char To Server_JSON_str.Length
+            If Server_JSON_str.Substring(i, 1) = " " Then
+                Exit For
+            Else
+                dist_converter += Server_JSON_str.Substring(i, 1)
+            End If
+        Next
+        Dim distance As Integer = CInt(dist_converter)
 
-            'finds the time length of the journey
-            Dim damaged_JSON As String = Right(Server_JSON_str, Server_JSON_str.Length - dist_char)
-            Dim search_dura As String = "duration"
-            Dim dura_char As Integer = damaged_JSON.IndexOf(search_dura)
-            Console.WriteLine(dura_char)
-            dura_char = damaged_JSON.IndexOf("value")
-            dura_char += 9
-            Dim dura_converter As String = ""
-            For i As Integer = dura_char To damaged_JSON.Length
-                If damaged_JSON.Substring(i, 1) = " " Then
-                    Exit For
-                Else
-                    dura_converter += damaged_JSON.Substring(i, 1)
-                End If
-            Next
-            Dim duration As Integer = Integer.Parse(dura_converter)
+        'finds the time length of the journey
+        Dim damaged_JSON As String = Right(Server_JSON_str, Server_JSON_str.Length - dist_char)
+        Dim search_dura As String = "duration"
+        Dim dura_char As Integer = damaged_JSON.IndexOf(search_dura)
+        'Console.WriteLine(dura_char)
+        dura_char = damaged_JSON.IndexOf("value")
+        dura_char += 9
+        Dim dura_converter As String = ""
+        For i As Integer = dura_char To damaged_JSON.Length
+            If damaged_JSON.Substring(i, 1) = " " Then
+                Exit For
+            Else
+                dura_converter += damaged_JSON.Substring(i, 1)
+            End If
+        Next
+        Dim duration As Integer = Integer.Parse(dura_converter)
 
-            'tried to make this convert the string from the website to a class to make getting data really easily
-            'Dim JSON_object As List(Of JSON_data.Rootobject) = JsonConvert.DeserializeObject(Of List(Of JSON_data.Rootobject))(Server_JSON_str)
+        'tried to make this convert the string from the website to a class to make getting data really easily
+        'Dim JSON_object As List(Of JSON_data.Rootobject) = JsonConvert.DeserializeObject(Of List(Of JSON_data.Rootobject))(Server_JSON_str)
 
-            Console.WriteLine("Distance: " & distance & " (m)")
-            Console.WriteLine("Duration: " & duration & " (s)" & vbTab & Math.Floor(duration / 3600) & " hours  " & Math.Round((duration Mod 3600) / 60) & " minutes")
-            Dim passed(1) As Integer
-            passed(0) = distance
-            passed(1) = duration
-            Return passed
-        Else
-            Return Nothing
-        End If
+        Console.WriteLine("Distance: " & distance & " (m)")
+        Console.WriteLine("Duration: " & duration & " (s)" & vbTab & Math.Floor(duration / 3600) & " hours  " & Math.Round((duration Mod 3600) / 60) & " minutes")
+        Dim passed(1) As Integer
+        passed(0) = distance
+        passed(1) = duration
+        Return passed
+        'Else
+        '    Return Nothing
+        'End If
     End Function
-
-
-    'Function FindLat(ByVal destination As String, ByVal key As String)
-    '    'https://www.aspsnippets.com/Articles/Find-Co-ordinates-Latitude-And-Longitude-of-an-Address-Location-using-Google-Geocoding-API-in-ASPNet-using-C-And-VBNet.aspx
-    '    Dim url2 As String = "https://maps.googleapis.com/maps/api/geocode/json?address=" & destination & "&key=" & key
-
-    '    'links to google's API stuff (really really useful)  https://developers.google.com/maps/documentation/geocoding/start?hl=en_US
-    '    'https://developers.google.com/maps/documentation/directions/intro#Waypoints
-    '    'https://developers.google.com/maps/documentation/directions/?hl=en_US
-
-    '    Dim request As WebRequest = WebRequest.Create(url2)
-    '    Using response As WebResponse = DirectCast(request.GetResponse(), HttpWebResponse)
-    '        Using reader As New StreamReader(response.GetResponseStream(), Encoding.UTF8)
-    '            Dim dsResult As New DataSet()
-    '            dsResult.ReadXml(reader)
-    '            Dim dtCoordinates As New DataTable()
-    '            dtCoordinates.Columns.AddRange(New DataColumn(3) {New DataColumn("Id", GetType(Integer)), New DataColumn("Address", GetType(String)), New DataColumn("Latitude", GetType(String)), New DataColumn("Longitude", GetType(String))})
-    '            Dim geometry_id As String = dsResult.Tables("geometry").[Select]("result_id = " + ("result_id").ToString())(0)("geometry_id").ToString()
-    '            Dim location As DataRow = dsResult.Tables("location").[Select](Convert.ToString("geometry_id = ") & geometry_id)(0)
-    '            'dtCoordinates.Rows.Add(row("result_id"), row("formatted_address"), location("lat"), location("lng"))
-    '            Return location("Lat")
-    '        End Using
-    '    End Using
-    'End Function
 
 
     Public Sub Faith_Permute(ByVal length As Integer, ByRef nodes As List(Of String), ByVal End_dest As Boolean)
@@ -274,8 +250,33 @@ Module Module1
             shortest.distance = temp_dist
             shortest.distance = temp_dura
             For i As Integer = 0 To array.Length
-                shortest.nodes(i) = array(i)
+                shortest.nodes.Add(array(i))
             Next
         End If
     End Sub
+
+
+    'Function FindLat(ByVal destination As String, ByVal key As String)
+    '    'https://www.aspsnippets.com/Articles/Find-Co-ordinates-Latitude-And-Longitude-of-an-Address-Location-using-Google-Geocoding-API-in-ASPNet-using-C-And-VBNet.aspx
+    '    Dim url2 As String = "https://maps.googleapis.com/maps/api/geocode/json?address=" & destination & "&key=" & key
+
+    '    'links to google's API stuff (really really useful)  https://developers.google.com/maps/documentation/geocoding/start?hl=en_US
+    '    'https://developers.google.com/maps/documentation/directions/intro#Waypoints
+    '    'https://developers.google.com/maps/documentation/directions/?hl=en_US
+
+    '    Dim request As WebRequest = WebRequest.Create(url2)
+    '    Using response As WebResponse = DirectCast(request.GetResponse(), HttpWebResponse)
+    '        Using reader As New StreamReader(response.GetResponseStream(), Encoding.UTF8)
+    '            Dim dsResult As New DataSet()
+    '            dsResult.ReadXml(reader)
+    '            Dim dtCoordinates As New DataTable()
+    '            dtCoordinates.Columns.AddRange(New DataColumn(3) {New DataColumn("Id", GetType(Integer)), New DataColumn("Address", GetType(String)), New DataColumn("Latitude", GetType(String)), New DataColumn("Longitude", GetType(String))})
+    '            Dim geometry_id As String = dsResult.Tables("geometry").[Select]("result_id = " + ("result_id").ToString())(0)("geometry_id").ToString()
+    '            Dim location As DataRow = dsResult.Tables("location").[Select](Convert.ToString("geometry_id = ") & geometry_id)(0)
+    '            'dtCoordinates.Rows.Add(row("result_id"), row("formatted_address"), location("lat"), location("lng"))
+    '            Return location("Lat")
+    '        End Using
+    '    End Using
+    'End Function
+
 End Module
