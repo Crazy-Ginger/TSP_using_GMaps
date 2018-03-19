@@ -49,7 +49,11 @@ Module Module1
         List_print(node_list, False)
 
         Faith_Permute(node_list.Count, node_list, cont)
-
+        Console.WriteLine("Shortest distance was: " & shortest.distance / 1000)
+        For i As Integer = 0 To node_list.Count - 1
+            Console.Write(node_list.Item(shortest.nodes(i)) & ", ")
+        Next
+        Console.WriteLine()
         Console.ReadLine()
     End Sub
 
@@ -87,8 +91,6 @@ Module Module1
         For t As Integer = 1 To length - 2
             request_url += "via:" & nodes.Item(array(t)) & "|"
         Next
-
-        Console.WriteLine()
         ' request_url += "&key=" & waypointkey
 
         'pulls the GEOJSON data and puts it into a string
@@ -127,7 +129,8 @@ Module Module1
                 dist_converter += Server_JSON_str.Substring(i, 1)
             End If
         Next
-        Console.WriteLine(dist_converter)
+        Console.WriteLine()
+        Console.WriteLine("Dist converter: " & dist_converter)
         Dim distance As Integer = CInt(dist_converter)
 
         'finds the time length of the journey
@@ -233,7 +236,6 @@ Module Module1
 
 
     Public Sub Sort_array(ByRef array() As Integer, ByVal length As Integer, ByRef nodes As List(Of String), ByVal end_dest As Boolean)
-        shortest.distance = 2147483646
         If end_dest = True Then 'if there was an end destination being used then the length must be increased so that it is printed
             length += 1
         End If
@@ -243,9 +245,9 @@ Module Module1
         Next
 
         Dim dist_dura() As Integer = Waypointing(array, length, nodes)   'sends this to the function that should return the length/duration of the route
+        Dim retest As Integer = shortest.distance
 
-
-        If dist_dura(0) < shortest.distance Then   'compares the existing shortest route with the current one
+        If dist_dura(0) < retest Then   'compares the existing shortest route with the current one
             shortest.distance = dist_dura(0)
             shortest.duration = dist_dura(1)
             For i As Integer = 0 To array.Length - 1
@@ -281,5 +283,4 @@ Module Module1
     '        End Using
     '    End Using
     'End Function
-
 End Module
