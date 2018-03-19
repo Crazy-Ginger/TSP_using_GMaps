@@ -15,9 +15,9 @@ Public Class Shorter
 End Class
 
 Module Module1
-    Public shortest As Shorter
+    Public shortest As New Shorter
     Sub Main()
-        'shortest.distance = 2147483646
+        shortest.distance = 2147483646
         'Dim latLngKey As String = "AIzaSyA3A7tDgpFISYEY3B5qYdXm9StRa0pJkcA"
         Dim node_list As New List(Of String)
         Dim cont As Boolean = True
@@ -54,6 +54,7 @@ Module Module1
         Console.ReadLine()
     End Sub
 
+
     Function List_print(ByRef list As List(Of String), clear As Boolean)
         If clear = True Then
             Console.Clear()
@@ -87,62 +88,77 @@ Module Module1
         For t As Integer = 1 To length - 2
             request_url += "via:" & nodes.Item(array(t)) & "|"
         Next
-        request_url += "&key=" & waypointkey
+        Console.WriteLine()
+        ' request_url += "&key=" & waypointkey
 
         'pulls the GEOJSON data and puts it into a string
+        Console.WriteLine(request_url)
         Dim client As New WebClient()
-        Dim client_Stream As Stream = client.OpenRead(request_url)
-        Dim streamreading As New StreamReader(client_Stream)
-        Dim Server_JSON_str As String = streamreading.ReadToEnd()
-        streamreading.Close()
+        Dim sucess As Boolean = False
+        Try
+            Dim test_stream As Stream = client.OpenRead(request_url)
+            Console.WriteLine("It worked inside the try")
+            sucess = True
+        Catch ex As Exception
+            sucess = False
+            Console.WriteLine("It did't work")
+        End Try
+        If sucess = True Then
+            Dim client_Stream As Stream = client.OpenRead(request_url)
+            Dim streamreading As New StreamReader(client_Stream)
+            Dim Server_JSON_str As String = streamreading.ReadToEnd()
+            streamreading.Close()
 
-        'tries To make the JSON data Using JObject (did't know how to search the JObject for useful data
-        'Dim jdata As JObject = JObject.Parse(Server_JSON_str)
+            'tries To make the JSON data Using JObject (did't know how to search the JObject for useful data
+            'Dim jdata As JObject = JObject.Parse(Server_JSON_str)
 
 
-        'searches for a key phrase then retrieves the value associated with the key phrase
-        'finds the physical length of the journey
-        Dim search_dist As String = "distance"
-        Dim dist_char As Integer = Server_JSON_str.IndexOf(search_dist)
-        Console.WriteLine(dist_char)
-        dist_char = Server_JSON_str.IndexOf("value")
-        dist_char += 9
-        Dim dist_converter As String = ""
-        For i As Integer = dist_char To Server_JSON_str.Length
-            If Server_JSON_str.Substring(i, 1) = " " Then
-                Exit For
-            Else
-                dist_converter += Server_JSON_str.Substring(i, 1)
-            End If
-        Next
-        Dim distance As Integer = CInt(dist_converter)
+            'searches for a key phrase then retrieves the value associated with the key phrase
+            'finds the physical length of the journey
+            Dim search_dist As String = "distance"
+            Dim dist_char As Integer = Server_JSON_str.IndexOf(search_dist)
+            Console.WriteLine(dist_char)
+            dist_char = Server_JSON_str.IndexOf("value")
+            dist_char += 9
+            Dim dist_converter As String = ""
+            For i As Integer = dist_char To Server_JSON_str.Length
+                If Server_JSON_str.Substring(i, 1) = " " Then
+                    Exit For
+                Else
+                    dist_converter += Server_JSON_str.Substring(i, 1)
+                End If
+            Next
+            Dim distance As Integer = CInt(dist_converter)
 
-        'finds the time length of the journey
-        Dim damaged_JSON As String = Right(Server_JSON_str, Server_JSON_str.Length - dist_char)
-        Dim search_dura As String = "duration"
-        Dim dura_char As Integer = damaged_JSON.IndexOf(search_dura)
-        Console.WriteLine(dura_char)
-        dura_char = damaged_JSON.IndexOf("value")
-        dura_char += 9
-        Dim dura_converter As String = ""
-        For i As Integer = dura_char To damaged_JSON.Length
-            If damaged_JSON.Substring(i, 1) = " " Then
-                Exit For
-            Else
-                dura_converter += damaged_JSON.Substring(i, 1)
-            End If
-        Next
-        Dim duration As Integer = Integer.Parse(dura_converter)
+            'finds the time length of the journey
+            Dim damaged_JSON As String = Right(Server_JSON_str, Server_JSON_str.Length - dist_char)
+            Dim search_dura As String = "duration"
+            Dim dura_char As Integer = damaged_JSON.IndexOf(search_dura)
+            Console.WriteLine(dura_char)
+            dura_char = damaged_JSON.IndexOf("value")
+            dura_char += 9
+            Dim dura_converter As String = ""
+            For i As Integer = dura_char To damaged_JSON.Length
+                If damaged_JSON.Substring(i, 1) = " " Then
+                    Exit For
+                Else
+                    dura_converter += damaged_JSON.Substring(i, 1)
+                End If
+            Next
+            Dim duration As Integer = Integer.Parse(dura_converter)
 
-        'tried to make this convert the string from the website to a class to make getting data really easily
-        'Dim JSON_object As List(Of JSON_data.Rootobject) = JsonConvert.DeserializeObject(Of List(Of JSON_data.Rootobject))(Server_JSON_str)
+            'tried to make this convert the string from the website to a class to make getting data really easily
+            'Dim JSON_object As List(Of JSON_data.Rootobject) = JsonConvert.DeserializeObject(Of List(Of JSON_data.Rootobject))(Server_JSON_str)
 
-        Console.WriteLine("Distance: " & distance & " (m)")
-        Console.WriteLine("Duration: " & duration & " (s)" & vbTab & Math.Floor(duration / 3600) & " hours  " & Math.Round((duration Mod 3600) / 60) & " minutes")
-        Dim passed(1) As Integer
-        passed(0) = distance
-        passed(1) = duration
-        Return passed
+            Console.WriteLine("Distance: " & distance & " (m)")
+            Console.WriteLine("Duration: " & duration & " (s)" & vbTab & Math.Floor(duration / 3600) & " hours  " & Math.Round((duration Mod 3600) / 60) & " minutes")
+            Dim passed(1) As Integer
+            passed(0) = distance
+            passed(1) = duration
+            Return passed
+        Else
+            Return Nothing
+        End If
     End Function
 
 
@@ -237,6 +253,7 @@ Module Module1
         Console.WriteLine("Number of permutations: " & count & vbTab & "That was: " & watch.Elapsed.TotalMilliseconds & "ms, " & watch.ElapsedTicks & " ticks")
 
     End Sub
+
 
     Public Sub Sort_array(ByRef array() As Integer, ByVal length As Integer, ByRef nodes As List(Of String), ByVal end_dest As Boolean)
         shortest.distance = 2147483646
