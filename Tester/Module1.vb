@@ -102,7 +102,7 @@ Module Module1
         For t As Integer = 1 To length - 2
             request_url += "via:" & nodes.Item(array(t)) & "|"
         Next
-        ' request_url += "&key=" & waypointkey
+        request_url += "&key=" & waypointkey
 
         'pulls the GEOJSON data and puts it into a string
         'Console.WriteLine(request_url)
@@ -118,7 +118,7 @@ Module Module1
         Dim client As New WebClient()
         Dim client_Stream As Stream = client.OpenRead(request_url)
         Dim streamreading As New StreamReader(client_Stream)
-        Dim Server_JSON_str As String = streamreading.ReadToEnd()
+        Dim JSON_str As String = streamreading.ReadToEnd()
         streamreading.Close()
 
         'tries To make the JSON data Using JObject (did't know how to search the JObject for useful data
@@ -128,16 +128,16 @@ Module Module1
         'searches for a key phrase then retrieves the value associated with the key phrase
         'finds the physical length of the journey
         Dim search_dist As String = "distance"
-        Dim dist_char As Integer = Server_JSON_str.IndexOf(search_dist)
+        Dim dist_char As Integer = JSON_str.IndexOf(search_dist)
 
-        dist_char = Server_JSON_str.IndexOf("value")
+        dist_char = JSON_str.IndexOf("value")
         dist_char += 9
         Dim dist_converter As String = ""
-        For i As Integer = dist_char To Server_JSON_str.Length
-            If Server_JSON_str.Substring(i, 1) = " " Then
+        For i As Integer = dist_char To JSON_str.Length
+            If JSON_str.Substring(i, 1) = " " Then
                 Exit For
             Else
-                dist_converter += Server_JSON_str.Substring(i, 1)
+                dist_converter += JSON_str.Substring(i, 1)
             End If
         Next
         Console.WriteLine()
@@ -145,7 +145,7 @@ Module Module1
         Dim distance As Integer = CInt(dist_converter)
 
         'finds the time length of the journey
-        Dim damaged_JSON As String = Right(Server_JSON_str, Server_JSON_str.Length - dist_char)
+        Dim damaged_JSON As String = Right(JSON_str, JSON_str.Length - dist_char)
         Dim search_dura As String = "duration"
         Dim dura_char As Integer = damaged_JSON.IndexOf(search_dura)
         'Console.WriteLine(dura_char)
