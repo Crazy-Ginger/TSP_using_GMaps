@@ -13,10 +13,12 @@ Public Class Shorter
     Public distance As Integer
     Public duration As Integer
     Public nodes As New List(Of Integer)
+    Public URL As String
 End Class
 
 Module Module1
     Public shortest As New Shorter
+    Public Current_URL As StringBuilder
 
     Sub Main()
         shortest.distance = 2147483646
@@ -84,14 +86,14 @@ Module Module1
 
 
         Dim waypointkey As String = "AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w"
-        Dim request_url As New StringBuilder
-        request_url.Append("https://maps.googleapis.com/maps/api/directions/json?origin=")
-        request_url.Append(nodes.Item(0))
-        request_url.Append("&destination=" & nodes.Item(array(length - 1)) & "&waypoints=")
+
+        Current_URL.Equals("https://maps.googleapis.com/maps/api/directions/json?origin=")
+        Current_URL.Append(nodes.Item(0))
+        Current_URL.Append("&destination=" & nodes.Item(array(length - 1)) & "&waypoints=")
         For t As Integer = 1 To length - 2
-            request_url.Append("via:" & nodes.Item(array(t)) & "|")
+            Current_URL.Append("via:" & nodes.Item(array(t)) & "|")
         Next
-        request_url.Append("&key=" & waypointkey)
+        Current_URL.Append("&key=" & waypointkey)
 
 
         'pulls the GEOJSON data and puts it into a string
@@ -113,7 +115,7 @@ Module Module1
             Dim client As New WebClient()
             'client.DownloadFile(request_url, "JSON_data.json")
             'Dim client_Stream As Stream = client.OpenRead(request_url)
-            Dim client_Stream As Stream = client.OpenRead(request_url.ToString)     'Dim client_Stream As Stream = client.OpenRead(request_url)
+            Dim client_Stream As Stream = client.OpenRead(Current_URL.ToString)     'Dim client_Stream As Stream = client.OpenRead(request_url)
             Dim streamreading As New StreamReader(client_Stream)
             Dim JSON_str As String = streamreading.ReadToEnd()
 
@@ -326,18 +328,23 @@ Module Module1
             Console.Write(array(t) & ": " & nodes.Item(array(t)) & ", ")
         Next
         Console.WriteLine()
-        Dim dist_dura() As Integer = Datapull(array, length, nodes)   'sends this to the function that should return the length/duration of the route
-        Dim retest As Integer = shortest.distance
 
-        If dist_dura(0) < retest Then   'compares the existing shortest route with the current one
-            shortest.distance = dist_dura(0)
-            shortest.duration = dist_dura(1)
+        'sends this to the function that should return the length/duration of the route
+        Dim current_route() As Integer = Datapull(array, length, nodes)
+
+        'Dim retest As Integer = shortest.distance
+
+        'compares the existing shortest route with the current one
+        If current_route(0) < shortest.distance Then
+            shortest.distance = current_route(0)
+            shortest.duration = current_route(1)
+            shortest.URL = Current_URL.ToString
             For i As Integer = 0 To array.Length - 1
-                shortest.nodes.Item(i) = array(i)
+                shortest.nodes.Item(i) = nodes.Item(array(i))
             Next
-        Else
-
         End If
+
+
         Console.WriteLine("Shortest: " & shortest.distance)
         Console.WriteLine()
     End Sub
