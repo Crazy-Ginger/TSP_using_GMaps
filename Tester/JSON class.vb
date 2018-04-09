@@ -1,7 +1,7 @@
 ﻿Namespace JSON_data
     Public Class Rootobject
         Public Property geocoded_waypoints As Geocoded_Waypoints()
-        Public Property routes() As Route()
+        Public Property routes() As Route
         Public Property status As String
     End Class
 
@@ -14,7 +14,7 @@
     Public Class Route
         Public Property bounds As Bounds
         Public Property copyrights As String
-        Public Property legs() As Leg()
+        Public Property legs() As Leg
         Public Property overview_polyline As Overview_Polyline
         Public Property summary As String
         Public Property warnings() As Object

@@ -71,136 +71,187 @@ Module Module1
     End Function
 
 
-    'Function Datapull(ByRef array() As Integer, ByVal length As String, ByRef nodes As List(Of String)) As Integer()
-    '    'Builds request string
-    '    'Dim waypointkey As String = "AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w"
-    '    'Dim request_url As String = "https://maps.googleapis.com/maps/api/directions/json?origin="
-    '    'request_url += nodes.Item(0)
-    '    'request_url += "&destination=" & nodes.Item(array(length - 1)) & "&waypoints="
-    '    'For t As Integer = 1 To length - 2
-    '    '    request_url += "via:" & nodes.Item(array(t)) & "|"
-    '    'Nexts
-    '    'request_url += "&key=" & waypointkey
+    Function Datapull(ByRef array() As Integer, ByVal length As String, ByRef nodes As List(Of String)) As Integer()
+        'Builds request string
+        'Dim waypointkey As String = "AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w"
+        'Dim request_url As String = "https://maps.googleapis.com/maps/api/directions/json?origin="
+        'request_url += nodes.Item(0)
+        'request_url += "&destination=" & nodes.Item(array(length - 1)) & "&waypoints="
+        'For t As Integer = 1 To length - 2
+        '    request_url += "via:" & nodes.Item(array(t)) & "|"
+        'Nexts
+        'request_url += "&key=" & waypointkey
 
 
-    '    Dim waypointkey As String = "AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w"
-    '    Dim request_url As New StringBuilder
-    '    request_url.Append("https://maps.googleapis.com/maps/api/directions/json?origin=")
-    '    request_url.Append(nodes.Item(0))
-    '    request_url.Append("&destination=" & nodes.Item(array(length - 1)) & "&waypoints=")
-    '    For t As Integer = 1 To length - 2
-    '        request_url.Append("via:" & nodes.Item(array(t)) & "|")
-    '    Next
-    '    request_url.Append("&key=" & waypointkey)
+        Dim waypointkey As String = "AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w"
+        Dim request_url As New StringBuilder
+        request_url.Append("https://maps.googleapis.com/maps/api/directions/json?origin=")
+        request_url.Append(nodes.Item(0))
+        request_url.Append("&destination=" & nodes.Item(array(length - 1)) & "&waypoints=")
+        For t As Integer = 1 To length - 2
+            request_url.Append("via:" & nodes.Item(array(t)) & "|")
+        Next
+        request_url.Append("&key=" & waypointkey)
 
 
-    '    'pulls the GEOJSON data and puts it into a string
-    '    'Console.WriteLine(request_url)
+        'pulls the GEOJSON data and puts it into a string
+        'Console.WriteLine(request_url)
 
-    '    'Try
-    '    '    Dim test_stream As Stream = client.OpenRead(request_url)
-    '    '    Console.WriteLine("It worked inside the try")
-    '    '    sucess = True
-    '    'Catch ex As Exception
-    '    '    sucess = False
-    '    '    Console.WriteLine("It did't work")
-    '    'End Try
-    '    Dim client As New WebClient()
-    '    'client.DownloadFile(request_url, "JSON_data.json")
-
-    '    'Dim client_Stream As Stream = client.OpenRead(request_url)
-    '    Dim client_Stream As Stream = client.OpenRead(request_url.ToString)     'Dim client_Stream As Stream = client.OpenRead(request_url)
-    '    Dim streamreading As New StreamReader(client_Stream)
-    '    Dim JSON_str As String = streamreading.ReadToEnd()
+        'Try
+        '    Dim test_stream As Stream = client.OpenRead(request_url)
+        '    Console.WriteLine("It worked inside the try")
+        '    sucess = True
+        'Catch ex As Exception
+        '    sucess = False
+        '    Console.WriteLine("It did't work")
+        'End Try
+        Dim passed(1) As Integer
+        Dim count As Integer = 1
+        While count < 11
 
 
-    '    'Dim JSON_token As JToken = JObject.Parse(JSON_str)
-    '    'Dim distance As Integer = JSON_token.SelectToken("value")
-    '    'Dim temp_json As DynamicObject = JsonConvert.DeserializeObject(Of ExpandoObject)(JSON_str)
-    '    Dim temp_json As JSON_data.Rootobject = JsonConvert.DeserializeObject(Of JSON_data.Rootobject)(JSON_str)
-    '    'Dim temp_jsonlist As List(Of JSON_data.Rootobject) = JsonConvert.DeserializeObject(Of List(Of JSON_data.Rootobject))(JSON_str)
-    '    streamreading.Close()
-
-    '    Dim distance As Integer
-    '    Dim duration As Integer
-    '    Console.WriteLine(temp_json.status)
-    '    'Console.WriteLine(temp_jsonlist.Item(0).status)
-    '    If temp_json.status = "OK" Then
-    '        'If temp_jsonlist.Item(0).status = "OK" Then
-
-    '        distance = temp_json.routes.legs.distance.value
-    '        duration = temp_json.routes.legs.duration.value
-
-    '        'distance = temp_jsonlist.Item(0).routes.legs.distance.value
-    '        'duration = temp_jsonlist.Item(0).routes.legs.duration.value
-    '    Else
-    '        distance = 2147483646
-    '        duration = 2147483646
-    '    End If
-    '    Console.WriteLine("The distance is: " & distance)
-    '    Console.WriteLine("The duration is: " & duration)
-    '    Dim passed(1) As Integer
-    '    passed(0) = distance    'distance
-    '    passed(1) = duration   'duration
-    '    Return passed
-
-    '    'tries To make the JSON data Using JObject (did't know how to search the JObject for useful data
-    '    'Dim jdata As JObject = JObject.Parse(Server_JSON_str)
+            Dim client As New WebClient()
+            'client.DownloadFile(request_url, "JSON_data.json")
+            'Dim client_Stream As Stream = client.OpenRead(request_url)
+            Dim client_Stream As Stream = client.OpenRead(request_url.ToString)     'Dim client_Stream As Stream = client.OpenRead(request_url)
+            Dim streamreading As New StreamReader(client_Stream)
+            Dim JSON_str As String = streamreading.ReadToEnd()
 
 
-    '    'searches for a key phrase then retrieves the value associated with the key phrase
-    '    'finds the physical length of the journey
-    '    '_________________________________________________________________________________________________-
-    '    'Dim search_dist As String = "distance"
-    '    'Dim dist_char As Integer = JSON_str.IndexOf(search_dist)
 
-    '    'dist_char = JSON_str.IndexOf("value")
-    '    'dist_char += 9
-    '    'Dim dist_converter As String = ""
-    '    'For i As Integer = dist_char To JSON_str.Length
-    '    '    If JSON_str.Substring(i, 1) = " " Then
-    '    '        Exit For
-    '    '    Else
-    '    '        dist_converter += JSON_str.Substring(i, 1)
-    '    '    End If
-    '    'Next
-    '    ''Console.WriteLine()
-    '    ''Console.WriteLine("Dist converter: " & dist_converter)
-    '    'Dim distance As Integer = CInt(dist_converter)
-
-    '    ''finds the time length of the journey
-    '    'Dim damaged_JSON As String = Right(JSON_str, JSON_str.Length - dist_char)
-    '    'Dim search_dura As String = "duration"
-    '    'Dim dura_char As Integer = damaged_JSON.IndexOf(search_dura)
-    '    ''Console.WriteLine(dura_char)
-    '    'dura_char = damaged_JSON.IndexOf("value")
-    '    'dura_char += 9
-    '    'Dim dura_converter As String = ""
-    '    'For i As Integer = dura_char To damaged_JSON.Length
-    '    '    If damaged_JSON.Substring(i, 1) = " " Then
-    '    '        Exit For
-    '    '    Else
-    '    '        dura_converter += damaged_JSON.Substring(i, 1)
-    '    '    End If
-    '    'Next
-    '    'Dim duration As Integer = Integer.Parse(dura_converter)
-
-    '    '_____________________________________________________________________________________________
+            '___________________________________________________________________________________________________
+            'using the class system (that doesn't work yet)
+            'Dim JSON_token As JToken = JObject.Parse(JSON_str)
+            'Dim distance As Integer = JSON_token.SelectToken("value")
+            'Dim temp_json As DynamicObject = JsonConvert.DeserializeObject(Of ExpandoObject)(JSON_str)
+            'above are the ones that I don't think will ever work
 
 
-    '    'tried to make this convert the string from the website to a class to make getting data really easily
-    '    'Dim JSON_object As List(Of JSON_data.Rootobject) = JsonConvert.DeserializeObject(Of List(Of JSON_data.Rootobject))(Server_JSON_str)
+            'promising
+            'Dim temp_json As JSON_data.Rootobject = JsonConvert.DeserializeObject(Of JSON_data.Rootobject)(JSON_str)
+            'Dim temp_jsonlist As List(Of JSON_data.Rootobject) = JsonConvert.DeserializeObject(Of List(Of JSON_data.Rootobject))(JSON_str)
+            streamreading.Close()
 
-    '    'Console.WriteLine("Distance: " & distance & " (m)")
-    '    'Console.WriteLine("Duration: " & duration & " (s)" & vbTab & Math.Floor(duration / 3600) & " hours  " & Math.Round((duration Mod 3600) / 60) & " minutes")
-    '    'Dim passed(1) As Integer
-    '    'passed(0) = temp_json.routes.legs.distance.value    'distance
-    '    'passed(1) = temp_json.routes.legs.duration.value    'duration
-    '    'Return passed
-    '    'Else
-    '    '    Return Nothing
-    '    'End If
-    'End Function
+
+            'Dim distance As Integer
+            'Dim duration As Integer
+            'Console.WriteLine(temp_json.status)
+            ''Console.WriteLine(temp_jsonlist.Item(0).status)
+            'If temp_json.status = "OK" Then
+            '    'If temp_jsonlist.Item(0).status = "OK" Then
+
+            '    distance = temp_json.routes.legs.distance.value
+            '    duration = temp_json.routes.legs.duration.value
+
+            '    'distance = temp_jsonlist.Item(0).routes.legs.distance.value
+            '    'duration = temp_jsonlist.Item(0).routes.legs.duration.value
+            'Else
+            '    distance = 2147483646
+            '    duration = 2147483646
+            'End If
+            'Console.WriteLine("The distance is: " & distance)
+            'Console.WriteLine("The duration is: " & duration)
+            'Dim passed(1) As Integer
+            'passed(0) = distance    'distance
+            'passed(1) = duration   'duration
+            'Return passed
+            '_______________________________________________________________________________________________
+
+
+            'tries To make the JSON data Using JObject (did't know how to search the JObject for useful data)
+            'Dim jdata As JObject = JObject.Parse(Server_JSON_str)
+
+
+
+            'searches for a key phrase then retrieves the value associated with the key phrase
+            'finds the physical length of the journey
+            '_________________________________________________________________________________________________
+
+
+            'Dim search_dist As String = "distance"
+            'Dim dist_char As Integer = JSON_str.IndexOf(search_dist)
+            Dim status_search As String = Chr(34) & "status" & Chr(34)
+            Dim status_index As Integer = JSON_str.IndexOf(status_search)
+            status_index += 11
+            Dim status As String = ""
+            For i As Integer = status_index To JSON_str.Length
+                If JSON_str.Substring(i, 1) = "" Then
+                    Exit For
+                    count += 1
+                Else
+                    status += JSON_str.Substring(i, 1)
+                End If
+            Next
+            If status = "OK" Or status = "ok" Or status = "Ok" Then
+                Dim dist_char As Integer = JSON_str.IndexOf("value")
+                dist_char += 9
+                Dim dist_converter As String = ""
+                For i As Integer = dist_char To JSON_str.Length
+                    If JSON_str.Substring(i, 1) = " " Then
+                        Exit For
+                    Else
+                        dist_converter += JSON_str.Substring(i, 1)
+                    End If
+                Next
+
+
+                ''Console.WriteLine()
+                ''Console.WriteLine("Dist converter: " & dist_converter)
+
+                Dim distance As Integer = CInt(dist_converter)
+
+
+                'finds the time length of the journey
+                Dim damaged_JSON As String = Right(JSON_str, JSON_str.Length - dist_char)
+
+                Dim dura_char As Integer
+
+                dura_char = damaged_JSON.IndexOf("value")
+                dura_char += 9
+                Dim dura_converter As String = ""
+                For i As Integer = dura_char To damaged_JSON.Length
+                    If damaged_JSON.Substring(i, 1) = " " Then
+                        Exit For
+                    Else
+                        dura_converter += damaged_JSON.Substring(i, 1)
+                    End If
+                Next
+                Dim duration As Integer = CInt(dura_converter)
+
+                '_____________________________________________________________________________________________
+
+
+                'tried to make this convert the string from the website to a class to make getting data really easily
+                'Dim JSON_object As List(Of JSON_data.Rootobject) = JsonConvert.DeserializeObject(Of List(Of JSON_data.Rootobject))(Server_JSON_str)
+
+                'Console.WriteLine("Distance: " & distance & " (m)")
+                'Console.WriteLine("Duration: " & duration & " (s)" & vbTab & Math.Floor(duration / 3600) & " hours  " & Math.Round((duration Mod 3600) / 60) & " minutes")
+
+
+
+
+
+
+
+                'passed(0) = temp_json.routes.legs.distance.value    'distance using the class
+                'passed(1) = temp_json.routes.legs.duration.value    'duration using the class
+                passed(0) = distance                        'distance using string parser
+                passed(1) = duration                        'distance using string parser
+
+
+                Return passed
+                Exit Function
+
+                'Else
+                'Return Nothing
+                'End If
+            End If
+        End While
+
+        passed(0) = 2147483645
+        passed(1) = 2147483645
+        Return passed
+    End Function
 
 
     Public Sub Faith_Permute(ByVal length As Integer, ByRef nodes As List(Of String), ByVal End_dest As Boolean)
@@ -289,20 +340,20 @@ Module Module1
             Console.Write(array(t) & ": " & nodes.Item(array(t)) & ", ")
         Next
         Console.WriteLine()
-        'Dim dist_dura() As Integer = Datapull(array, length, nodes)   'sends this to the function that should return the length/duration of the route
-        'Dim retest As Integer = shortest.distance
+        Dim dist_dura() As Integer = Datapull(array, length, nodes)   'sends this to the function that should return the length/duration of the route
+        Dim retest As Integer = shortest.distance
 
-        'If dist_dura(0) < retest Then   'compares the existing shortest route with the current one
-        '    shortest.distance = dist_dura(0)
-        '    shortest.duration = dist_dura(1)
-        '    For i As Integer = 0 To array.Length - 1
-        '        shortest.nodes.Item(i) = array(i)
-        '    Next
-        'Else
+        If dist_dura(0) < retest Then   'compares the existing shortest route with the current one
+            shortest.distance = dist_dura(0)
+            shortest.duration = dist_dura(1)
+            For i As Integer = 0 To array.Length - 1
+                shortest.nodes.Item(i) = array(i)
+            Next
+        Else
 
-        'End If
-        'Console.WriteLine("Shortest: " & shortest.distance)
-        'Console.WriteLine()
+        End If
+        Console.WriteLine("Shortest: " & shortest.distance)
+        Console.WriteLine()
     End Sub
 
 
