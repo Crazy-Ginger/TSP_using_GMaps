@@ -119,15 +119,16 @@ Module Module1
 
 
 
-            '___________________________________________________________________________________________________
+            '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             'using the class system (that doesn't work yet)
             'Dim JSON_token As JToken = JObject.Parse(JSON_str)
             'Dim distance As Integer = JSON_token.SelectToken("value")
             'Dim temp_json As DynamicObject = JsonConvert.DeserializeObject(Of ExpandoObject)(JSON_str)
+            'tried to make this convert the string from the website to a class to make getting data really easily
             'above are the ones that I don't think will ever work
 
 
-            'promising
+            'promising ========================================================
             'Dim temp_json As JSON_data.Rootobject = JsonConvert.DeserializeObject(Of JSON_data.Rootobject)(JSON_str)
             'Dim temp_jsonlist As List(Of JSON_data.Rootobject) = JsonConvert.DeserializeObject(Of List(Of JSON_data.Rootobject))(JSON_str)
             streamreading.Close()
@@ -155,21 +156,16 @@ Module Module1
             'passed(0) = distance    'distance
             'passed(1) = duration   'duration
             'Return passed
-            '_______________________________________________________________________________________________
+            '----------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-            'tries To make the JSON data Using JObject (did't know how to search the JObject for useful data)
-            'Dim jdata As JObject = JObject.Parse(Server_JSON_str)
 
 
 
             'searches for a key phrase then retrieves the value associated with the key phrase
-            'finds the physical length of the journey
-            '_________________________________________________________________________________________________
+            'finds the length and estimated duration of the journey
+            '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-            'Dim search_dist As String = "distance"
-            'Dim dist_char As Integer = JSON_str.IndexOf(search_dist)
             Dim status_search As String = Chr(34) & "status" & Chr(34)
             Dim status_index As Integer = JSON_str.IndexOf(status_search)
             status_index += 11
@@ -182,7 +178,10 @@ Module Module1
                     status += JSON_str.Substring(i, 1)
                 End If
             Next
+
+            'test if the status of the route is valid or not
             If status = "OK" Or status = "ok" Or status = "Ok" Then
+                'find the distance of the route
                 Dim dist_char As Integer = JSON_str.IndexOf("value")
                 dist_char += 9
                 Dim dist_converter As String = ""
@@ -193,12 +192,8 @@ Module Module1
                         dist_converter += JSON_str.Substring(i, 1)
                     End If
                 Next
-
-
-                ''Console.WriteLine()
-                ''Console.WriteLine("Dist converter: " & dist_converter)
-
                 Dim distance As Integer = CInt(dist_converter)
+                'Console.WriteLine("Dist converter: " & dist_converter)
 
 
                 'finds the time length of the journey
@@ -218,26 +213,17 @@ Module Module1
                 Next
                 Dim duration As Integer = CInt(dura_converter)
 
-                '_____________________________________________________________________________________________
-
-
-                'tried to make this convert the string from the website to a class to make getting data really easily
-                'Dim JSON_object As List(Of JSON_data.Rootobject) = JsonConvert.DeserializeObject(Of List(Of JSON_data.Rootobject))(Server_JSON_str)
+                'Console.WriteLine("Dist converter: " & dura_converter)
+                '------------------------------------------------------------------------------------------------------------------------------------------------
 
                 'Console.WriteLine("Distance: " & distance & " (m)")
                 'Console.WriteLine("Duration: " & duration & " (s)" & vbTab & Math.Floor(duration / 3600) & " hours  " & Math.Round((duration Mod 3600) / 60) & " minutes")
-
-
-
-
-
 
 
                 'passed(0) = temp_json.routes.legs.distance.value    'distance using the class
                 'passed(1) = temp_json.routes.legs.duration.value    'duration using the class
                 passed(0) = distance                        'distance using string parser
                 passed(1) = duration                        'distance using string parser
-
 
                 Return passed
                 Exit Function
