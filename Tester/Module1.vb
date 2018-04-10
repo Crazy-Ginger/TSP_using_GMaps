@@ -322,10 +322,10 @@ Module Module1
             length += 1
         End If
 
-        For t As Integer = 0 To length - 1
-            Console.Write(array(t) & ": " & nodes.Item(array(t)) & ", ")
-        Next
-        Console.WriteLine()
+        'For t As Integer = 0 To length - 1
+        '    Console.Write(array(t) & ": " & nodes.Item(array(t)) & ", ")
+        'Next
+        'Console.WriteLine()
 
         'sends this to the function that should return the length/duration of the route
         Dim current_route() As Integer = Datapull(array, length, nodes)
@@ -342,9 +342,8 @@ Module Module1
             Next
         End If
 
-
-        Console.WriteLine("Shortest: " & shortest.distance)
-        Console.WriteLine()
+        'Console.WriteLine("Shortest: " & shortest.distance)
+        'Console.WriteLine()
     End Sub
 
 
