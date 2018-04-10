@@ -249,8 +249,8 @@ Module Module1
         Dim initial_comp As Integer
         Dim rearrange As Integer
         Dim asc_swapper As Integer
-        Dim count As Long
-        Dim Last As Boolean
+        Dim count As Long = 0
+        Dim Last As Boolean = False
 
         'Fills the array with pointers that can be sorted
         For i = 0 To length - 1
@@ -263,8 +263,6 @@ Module Module1
             length -= 1
         End If
 
-        count = 0
-        Last = False
 
         'records the time it takes for all the permutations to be calculated (temp)
         Dim watch As Stopwatch = Stopwatch.StartNew()
@@ -302,10 +300,10 @@ Module Module1
             rearrange = length - 1
             'finds the pointer to be swapped with the out of place pointer
             While P(rearrange) > P(initial_comp)
-                rearrange = rearrange - 1
+                rearrange -= 1
             End While
 
-            rearrange = rearrange + 1
+            rearrange += 1
 
             'makes the swap to place the large number in front
             swapper = P(initial_comp)
