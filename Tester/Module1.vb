@@ -15,11 +15,15 @@ Public Class Shorter
     Public nodes As New List(Of Integer)
     Public URL As String
 End Class
+Public Class Globalvars
+
+End Class
+
 
 Module Module1
     Public shortest As New Shorter
-    Public Current_URL As StringBuilder
-
+    Public Current_URL As New StringBuilder
+    Public watch As Stopwatch
     Sub Main()
         shortest.distance = 2147483646
         shortest.duration = 0
@@ -86,8 +90,8 @@ Module Module1
 
 
         Dim waypointkey As String = "AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w"
-
-        Current_URL.Equals("https://maps.googleapis.com/maps/api/directions/json?origin=")
+        Current_URL.Clear()
+        Current_URL.Append("https://maps.googleapis.com/maps/api/directions/json?origin=")
         Current_URL.Append(nodes.Item(0))
         Current_URL.Append("&destination=" & nodes.Item(array(length - 1)) & "&waypoints=")
         For t As Integer = 1 To length - 2
@@ -171,18 +175,18 @@ Module Module1
             Dim status_search As String = Chr(34) & "status" & Chr(34)
             Dim status_index As Integer = JSON_str.IndexOf(status_search)
             status_index += 11
-            Dim status As String = ""
+            Dim status As New StringBuilder
             For i As Integer = status_index To JSON_str.Length
-                If JSON_str.Substring(i, 1) = "" Then
+                If JSON_str.Substring(i, 1) = Chr(34) Then
                     Exit For
                     count += 1
                 Else
-                    status += JSON_str.Substring(i, 1)
+                    status.Append(JSON_str.Substring(i, 1))
                 End If
             Next
 
             'test if the status of the route is valid or not
-            If status = "OK" Or status = "ok" Or status = "Ok" Then
+            If status.ToString = "OK" Then
                 'find the distance of the route
                 Dim dist_char As Integer = JSON_str.IndexOf("value")
                 dist_char += 9
@@ -265,7 +269,7 @@ Module Module1
 
 
         'records the time it takes for all the permutations to be calculated (temp)
-        Dim watch As Stopwatch = Stopwatch.StartNew()
+        Stopwatch.StartNew()
 
         Do While Not Last
             'outputs the pointers and destinations in order
@@ -310,7 +314,7 @@ Module Module1
             P(initial_comp) = P(rearrange)
             P(rearrange) = swapper
         Loop
-        watch.Stop()
+
         Console.WriteLine("Number of permutations: " & count & vbTab & "That was: " & watch.Elapsed.TotalMilliseconds & "ms, " & watch.ElapsedTicks & " ticks")
 
     End Sub
@@ -341,7 +345,9 @@ Module Module1
                 shortest.nodes.Item(i) = nodes.Item(array(i))
             Next
         End If
-
+        watch.Stop()
+        Console.WriteLine(watch)
+        Console.ReadLine()
         'Console.WriteLine("Shortest: " & shortest.distance)
         'Console.WriteLine()
     End Sub
