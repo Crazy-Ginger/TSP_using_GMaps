@@ -12,18 +12,15 @@ Imports System.Text.RegularExpressions
 Public Class Shorter
     Public distance As Integer
     Public duration As Integer
-    Public nodes As New List(Of Integer)
+    Public nodes As New List(Of String)
     Public URL As String
-End Class
-Public Class Globalvars
-
 End Class
 
 
 Module Module1
     Public shortest As New Shorter
     Public Current_URL As New StringBuilder
-    Public watch As Stopwatch
+    'Public watch As Stopwatch
     Sub Main()
         shortest.distance = 2147483646
         shortest.duration = 0
@@ -56,9 +53,9 @@ Module Module1
         List_print(node_list, False)
 
         Faith_Permute(node_list.Count, node_list, cont)
-        Console.WriteLine("Shortest distance was: " & shortest.distance / 1000)
+        Console.WriteLine("Shortest distance was: " & shortest.distance / 1000 & " km")
         For i As Integer = 0 To node_list.Count - 1
-            Console.Write(node_list.Item(shortest.nodes(i)) & ", ")
+            Console.Write(shortest.nodes.Item(i) & ", ")
         Next
         Console.WriteLine()
         Console.ReadLine()
@@ -112,8 +109,7 @@ Module Module1
         '    Console.WriteLine("It did't work")
         'End Try
         Dim passed(1) As Integer
-        Dim count As Integer = 1
-        While count < 11
+        For count As Integer = 1 To 3
 
 
             Dim client As New WebClient()
@@ -174,7 +170,8 @@ Module Module1
 
             Dim status_search As String = Chr(34) & "status" & Chr(34)
             Dim status_index As Integer = JSON_str.IndexOf(status_search)
-            status_index += 11
+            Console.WriteLine(status_search)
+            status_index += 12
             Dim status As New StringBuilder
             For i As Integer = status_index To JSON_str.Length
                 If JSON_str.Substring(i, 1) = Chr(34) Then
@@ -184,7 +181,8 @@ Module Module1
                     status.Append(JSON_str.Substring(i, 1))
                 End If
             Next
-
+            Console.WriteLine(status.ToString)
+            Console.ReadLine()
             'test if the status of the route is valid or not
             If status.ToString = "OK" Then
                 'find the distance of the route
@@ -230,18 +228,49 @@ Module Module1
                 'passed(1) = temp_json.routes.legs.duration.value    'duration using the class
                 passed(0) = distance                        'distance using string parser
                 passed(1) = duration                        'distance using string parser
-
+                'Console.WriteLine("route found")
                 Return passed
                 Exit Function
 
                 'Else
                 'Return Nothing
                 'End If
-            End If
-        End While
+            ElseIf status.ToString = "ZERO_RESULTS" Then
+                passed(0) = 2147483645
+                passed(1) = 2147483645
+                Console.WriteLine("Zero_results")
+                Exit For
 
-        passed(0) = 2147483645
-        passed(1) = 2147483645
+            ElseIf status.ToString = "NOT_FOUND" Then
+                passed(0) = 2147483645
+                passed(1) = -1
+                Console.WriteLine("not_found")
+                Exit For
+
+            ElseIf status.ToString = "OVER_QUERY_LIMIT" Then
+                passed(0) = 2147483645
+                passed(1) = -2
+                Console.WriteLine("Query limit achieved")
+                Exit For
+
+            ElseIf status.ToString = "MAX_WAYPOINTS_EXCEEDED" Then
+                passed(0) = 2147483645
+                passed(1) = -3
+
+                Exit For
+
+            ElseIf status.ToString = "MAX_ROUTE_LENGTH_EXCEEDED" Then
+                passed(0) = 2147483645
+                passed(1) = 2147483645
+                Exit For
+
+            Else
+                passed(0) = 2147483645
+                passed(1) = 2147483645
+            End If
+
+        Next
+
         Return passed
     End Function
 
@@ -269,7 +298,8 @@ Module Module1
 
 
         'records the time it takes for all the permutations to be calculated (temp)
-        Stopwatch.StartNew()
+        Dim watch As New Stopwatch
+        watch.Start
 
         Do While Not Last
             'outputs the pointers and destinations in order
@@ -310,6 +340,7 @@ Module Module1
             rearrange += 1
 
             'makes the swap to place the large number in front
+            watch.Stop()
             swapper = P(initial_comp)
             P(initial_comp) = P(rearrange)
             P(rearrange) = swapper
@@ -342,11 +373,12 @@ Module Module1
             shortest.duration = current_route(1)
             shortest.URL = Current_URL.ToString
             For i As Integer = 0 To array.Length - 1
+                Console.WriteLine("nodes.Item(array(i))")
                 shortest.nodes.Item(i) = nodes.Item(array(i))
             Next
         End If
-        watch.Stop()
-        Console.WriteLine(watch)
+        'watch.Stop()
+        'Console.WriteLine(watch)
         Console.ReadLine()
         'Console.WriteLine("Shortest: " & shortest.distance)
         'Console.WriteLine()
