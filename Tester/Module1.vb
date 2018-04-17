@@ -390,19 +390,10 @@ Module Module1
         If last = True Then
             length -= 1
         End If
-        Dim final_order As New Shorter
-        Dim pointers As New List(Of Integer)
-        For i As Integer = 0 To length
-            pointers.Add(i)
-        Next
-        final_order.nodes.Add(nodes.Item(0))
-        pointers.Remove(0)
+        Dim chosen As String = ""
+        Dim next_nodes(length) As String
+        For i As Integer = 0 To nodes.Count - 1
 
-        For i As Integer = 0 To length
-
-            Dim request_url As String = "https://maps.googleapis.com/maps/api/directions/json?origin="
-            request_url += nodes.Item(0)
-            request_url += "&destination=" & nodes.Item(i)
         Next
         Return Nothing
     End Function
