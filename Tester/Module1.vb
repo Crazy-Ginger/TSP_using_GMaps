@@ -387,14 +387,20 @@ Module Module1
 
     Public Function Approximation(ByVal nodes As List(Of String), ByVal last As Boolean)
         Dim length As Integer = nodes.Count - 1
+        Dim using_URL As New StringBuilder
         If last = True Then
             length -= 1
         End If
         Dim chosen As String = ""
-        Dim next_nodes(length) As String
-        For i As Integer = 0 To nodes.Count - 1
+        Dim next_nodes As List(Of String) = nodes
+        Dim final_route As New List(Of String)
+        final_route.Add(next_nodes.Item(0))
+        next_nodes.Remove(0)
+        While next_nodes.Count > 0
+            For i As Integer = 0 To next_nodes.Count - 1
 
-        Next
+            Next
+        End While
         Return Nothing
     End Function
 
