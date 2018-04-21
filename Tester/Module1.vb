@@ -52,12 +52,13 @@ Module Module1
         Console.Clear()
         List_print(node_list, False)
 
-        Approximation(node_list, cont)
+        shortest = Approximation(node_list, cont)
         Console.WriteLine("Shortest distance was: " & shortest.distance / 1000 & " km")
         For i As Integer = 0 To shortest.nodes.Count - 1
             Console.Write(shortest.nodes.Item(i) & ", ")
         Next
         Console.WriteLine()
+        Console.WriteLine(shortest.URL)
         Console.ReadLine()
     End Sub
 
@@ -412,8 +413,9 @@ Module Module1
         'run whilst there are still nodes within the copied list this will loop
         'While next_nodes.Count > 0
         While length > -1
-
+            distance = Integer.MaxValue
             For current_index As Integer = 0 To length
+                Console.WriteLine("Current tree is:" & final_route.Item(final_route.Count - 1) & "  to  " & next_nodes.Item(current_index))
                 'For current_index As Integer = length To 0 Step -1
                 'creates URL to query distance between last node and the current node
                 using_URL.Append("https://maps.googleapis.com/maps/api/directions/json?origin=")
@@ -481,6 +483,9 @@ Module Module1
                     End If
                 Next
                 'bug testing
+                Console.WriteLine("current index: " & current_index & vbTab & "current route:" & comp_dist)
+                Console.WriteLine("Shortest index: " & shortest_tree & vbTab & "shortest distance: " & distance)
+                Console.WriteLine()
                 If comp_dist = -1 Then
                     Console.WriteLine("Well that didn't work")
                 ElseIf comp_dist = -2 Then
@@ -496,9 +501,11 @@ Module Module1
                     Console.WriteLine("Well that didn't work: " & comp_dist)
                     Exit While
                 ElseIf comp_dist < distance And comp_dist > 0 Then
+
                     distance = comp_dist
                     shortest_tree = current_index
                 End If
+                'Console.ReadLine()
                 List_print(next_nodes, False)
                 Console.WriteLine("final_route:")
                 List_print(final_route, False)
@@ -519,7 +526,7 @@ Module Module1
         Current_URL.Append("https://maps.googleapis.com/maps/api/directions/json?origin=")
         'adds the addresses to the URL
         Current_URL.Append(final_route.Item(0) & "&destination=")
-        Current_URL.Append(final_route.Item(final_route.Count - 1))
+        Current_URL.Append(final_route.Item(final_route.Count - 1) & "&waypoints=")
         For t As Integer = 1 To final_route.Count - 2
             Current_URL.Append("via:" & final_route.Item(t) & "|")
         Next
@@ -579,7 +586,7 @@ Module Module1
                     End If
                 Next
                 shortest.duration = CInt(dura_converter)
-
+                Console.WriteLine("shortest.distance: " & shortest.distance)
                 'passed(1) = CInt(dura_converter)
 
 
