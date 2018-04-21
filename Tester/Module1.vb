@@ -52,9 +52,9 @@ Module Module1
         Console.Clear()
         List_print(node_list, False)
 
-        Faith_Permute(node_list.Count, node_list, cont)
+        Approximation(node_list, cont)
         Console.WriteLine("Shortest distance was: " & shortest.distance / 1000 & " km")
-        For i As Integer = 0 To node_list.Count - 1
+        For i As Integer = 0 To shortest.nodes.Count - 1
             Console.Write(shortest.nodes.Item(i) & ", ")
         Next
         Console.WriteLine()
@@ -402,15 +402,19 @@ Module Module1
 
         'add the starting address and remove it from next_nodes
         final_route.Add(next_nodes.Item(0))
-        next_nodes.Remove(0)
+        next_nodes.RemoveAt(0)
         length -= 1
+
+        List_print(next_nodes, False)
+        Console.WriteLine("final_route:")
+        List_print(final_route, False)
 
         'run whilst there are still nodes within the copied list this will loop
         'While next_nodes.Count > 0
-        While length > 0
+        While length > -1
 
-                For current_index As Integer = 0 To length
-
+            For current_index As Integer = 0 To length
+                'For current_index As Integer = length To 0 Step -1
                 'creates URL to query distance between last node and the current node
                 using_URL.Append("https://maps.googleapis.com/maps/api/directions/json?origin=")
                 using_URL.Append(final_route.Item(final_route.Count - 1))
@@ -428,7 +432,7 @@ Module Module1
                     'checks if the route is possible or not
                     Dim status_search As String = Chr(34) & "status" & Chr(34)
                     Dim status_index As Integer = JSON_str.IndexOf(status_search)
-                    Console.WriteLine(status_search)
+                    'Console.WriteLine(status_search)
                     status_index += 12
                     Dim status As New StringBuilder
                     For i As Integer = status_index To JSON_str.Length
@@ -495,10 +499,14 @@ Module Module1
                     distance = comp_dist
                     shortest_tree = current_index
                 End If
+                List_print(next_nodes, False)
+                Console.WriteLine("final_route:")
+                List_print(final_route, False)
                 using_URL.Clear()
             Next
+            'adds the closest address to final_routes and removes it from the unvisited nodes list
             final_route.Add(next_nodes.Item(shortest_tree))
-            next_nodes.Remove(shortest_tree)
+            next_nodes.RemoveAt(shortest_tree)
             length -= 1
         End While
 
@@ -530,7 +538,6 @@ Module Module1
 
             Dim status_search As String = Chr(34) & "status" & Chr(34)
             Dim status_index As Integer = JSON_str.IndexOf(status_search)
-            Console.WriteLine(status_search)
             status_index += 12
             Dim status As New StringBuilder
             For i As Integer = status_index To JSON_str.Length
@@ -542,7 +549,6 @@ Module Module1
                 End If
             Next
             Console.WriteLine(status.ToString)
-            Console.ReadLine()
             'test if the status of the route is valid or not
             If status.ToString = "OK" Then
                 'find the distance of the route
@@ -581,6 +587,7 @@ Module Module1
                 For i As Integer = 0 To final_route.Count - 1
                     shortest.nodes.Add(final_route.Item(i))
                 Next
+                List_print(shortest.nodes, False)
                 Return shortest
                 Exit Function
 
