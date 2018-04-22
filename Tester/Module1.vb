@@ -14,6 +14,7 @@ Public Class Shorter
     Public duration As Integer
     Public nodes As New List(Of String)
     Public URL As String
+    Public status As Integer
 End Class
 
 
@@ -52,13 +53,14 @@ Module Module1
         Console.Clear()
         List_print(node_list, False)
 
+        'shortest = Permute(node_list.Count, node_list, cont)
         shortest = Approximation(node_list, cont)
         Console.WriteLine("Shortest distance was: " & shortest.distance / 1000 & " km")
         For i As Integer = 0 To shortest.nodes.Count - 1
             Console.Write(shortest.nodes.Item(i) & ", ")
         Next
-        Console.WriteLine()
-        Console.WriteLine(shortest.URL)
+        'Console.WriteLine()
+        'Console.WriteLine(shortest.URL)
         Console.ReadLine()
     End Sub
 
@@ -276,7 +278,85 @@ Module Module1
     End Function
 
 
-    Public Function Faith_Permute(ByVal length As Integer, ByRef nodes As List(Of String), ByVal End_dest As Boolean)
+    'Public Function Faith_Permute(ByVal length As Integer, ByRef nodes As List(Of String), ByVal End_dest As Boolean)
+    '    'Creates the variables to be used in the algorithm
+    '    Dim P(length - 1) As Integer
+    '    Dim swapper As Integer
+    '    Dim initial_comp As Integer
+    '    Dim rearrange As Integer
+    '    Dim asc_swapper As Integer
+    '    Dim count As Long = 0
+    '    Dim Last As Boolean = False
+
+    '    'Fills the array with pointers that can be sorted
+    '    For i = 0 To length - 1
+    '        P(i) = i
+    '        shortest.nodes.Add(i)
+    '    Next
+
+    '    'Checks if there is a set end point that should not be shuffled
+    '    If End_dest = True Then
+    '        length -= 1
+    '    End If
+
+
+    '    'records the time it takes for all the permutations to be calculated (temp)
+    '    Dim watch As New Stopwatch
+    '    watch.Start()
+
+    '    Do While Not Last
+    '        'outputs the pointers and destinations in order
+    '        Sort_array(P, length, nodes, End_dest)
+
+    '        count += 1
+    '        Last = True
+    '        initial_comp = length - 2
+
+    '        'finds the largest pointer out of place (from the back)
+    '        Do While initial_comp > 0
+    '            If P(initial_comp) < P(initial_comp + 1) Then
+    '                Last = False
+    '                Exit Do
+    '            End If
+    '            initial_comp = initial_comp - 1
+    '        Loop
+
+    '        rearrange = initial_comp + 1
+    '        asc_swapper = length - 1
+
+    '        'rearranges all the pointers behind the out of place pointer into ascending numerical order
+    '        While rearrange < asc_swapper
+    '            ' Swap p(j) and p(k)
+    '            swapper = P(rearrange)
+    '            P(rearrange) = P(asc_swapper)
+    '            P(asc_swapper) = swapper
+    '            rearrange += 1
+    '            asc_swapper -= 1
+    '        End While
+
+    '        rearrange = length - 1
+    '        'finds the pointer to be swapped with the out of place pointer
+    '        While P(rearrange) > P(initial_comp)
+    '            rearrange -= 1
+    '        End While
+
+    '        rearrange += 1
+
+    '        'makes the swap to place the large number in front
+    '        watch.Stop()
+    '        swapper = P(initial_comp)
+    '        P(initial_comp) = P(rearrange)
+    '        P(rearrange) = swapper
+    '    Loop
+
+    '    Console.WriteLine("Number of permutations: " & count & vbTab & "That was: " & watch.Elapsed.TotalMilliseconds & "ms, " & watch.ElapsedTicks & " ticks")
+    '    Return Nothing
+    'End Function
+
+
+    Public Function Permute(ByVal length As Integer, ByRef nodes As List(Of String), ByVal End_dest As Boolean)
+        shortest.distance = Integer.MaxValue
+
         'Creates the variables to be used in the algorithm
         Dim P(length - 1) As Integer
         Dim swapper As Integer
@@ -285,26 +365,65 @@ Module Module1
         Dim asc_swapper As Integer
         Dim count As Long = 0
         Dim Last As Boolean = False
-
+        Dim shorttest As New Shorter
         'Fills the array with pointers that can be sorted
         For i = 0 To length - 1
             P(i) = i
-            shortest.nodes.Add(i)
+            'shortest.nodes.Add(i)
         Next
-
         'Checks if there is a set end point that should not be shuffled
         If End_dest = True Then
             length -= 1
         End If
 
-
         'records the time it takes for all the permutations to be calculated (temp)
-        Dim watch As New Stopwatch
-        watch.Start()
+        'Dim watch As Stopwatch = Stopwatch.StartNew()
 
+        'If Comparator(P, length, nodes, End_dest) = -1 Then
+        '    shortest.duration = -1
+        'ElseIf Comparator(P, length, nodes, End_dest) = -2 Then
+        '    shortest.duration = -2
+        'ElseIf Comparator(P, length, nodes, End_dest) = -3 Then
+        '    shortest.duration = -3
+        'Else
         Do While Not Last
-            'outputs the pointers and destinations in order
-            Sort_array(P, length, nodes, End_dest)
+            'finds the length of the current route and sees if it is the shortest route currently created
+            Dim test_short As Shorter = Comparator(P, length, nodes, End_dest)
+
+            If test_short.status = 0 And shortest.status <> 1 Then
+                shortest.status = 0
+                Return shortest
+                Exit Function
+            ElseIf test_short.status = -1 And shortest.status <> 1 Then
+                shortest.status = -1
+                Return shortest
+                Exit Function
+            ElseIf test_short.status = -2 And shortest.status <> 1 Then
+                shortest.status = -2
+                Return shortest
+                Exit Function
+            ElseIf test_short.status = -3 And shortest.status <> 1 Then
+                shortest.status = -3
+                Return shortest
+                Exit Function
+            ElseIf test_short.status = -4 And shortest.status <> 1 Then
+                shortest.status = -4
+            ElseIf test_short.status = 1 And test_short.distance < shortest.distance Then
+                'replaces the previous short route with new shortest route
+                shortest.distance = test_short.distance
+                shortest.duration = test_short.duration
+                shortest.URL = Current_URL.ToString
+                shortest.status = test_short.status
+
+                Dim test As New StringBuilder
+                For i As Integer = 0 To P.Length - 1
+                    shortest.nodes.Item(i) = nodes.Item(P(i))
+                    test.Append(nodes.Item(P(i)) & ", ")
+                Next
+                MsgBox(test.ToString)
+            Else
+
+            End If
 
             count += 1
             Last = True
@@ -341,14 +460,72 @@ Module Module1
             rearrange += 1
 
             'makes the swap to place the large number in front
-            watch.Stop()
             swapper = P(initial_comp)
             P(initial_comp) = P(rearrange)
             P(rearrange) = swapper
         Loop
+        'End If
+        'watch.Stop()
 
-        Console.WriteLine("Number of permutations: " & count & vbTab & "That was: " & watch.Elapsed.TotalMilliseconds & "ms, " & watch.ElapsedTicks & " ticks")
-        Return Nothing
+        'Console.WriteLine("Number of permutations: " & count & vbTab & "That was: " & watch.Elapsed.TotalMilliseconds & "ms, " & watch.ElapsedTicks & " ticks")
+        Return shortest
+    End Function
+
+
+    Public Function Comparator(ByRef array() As Integer, ByVal length As Integer, ByRef nodes As List(Of String), ByVal end_dest As Boolean)
+        'if there was an end destination being used then the length must be increased so that it is printed
+        If end_dest = True Then
+            length += 1
+        End If
+
+        'For t As Integer = 0 To length - 1
+        '    Console.Write(array(t) & ": " & nodes.Item(array(t)) & ", ")
+        'Next
+        Dim waypointkey As String = "AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w"
+        Current_URL.Clear()
+        Current_URL.Append("https://maps.googleapis.com/maps/api/directions/json?origin=")
+        Current_URL.Append(nodes.Item(0))
+        Current_URL.Append("&destination=" & nodes.Item(array(length - 1)) & "&waypoints=")
+        For t As Integer = 1 To length - 2
+            Current_URL.Append("via:" & nodes.Item(array(t)) & "|")
+        Next
+        Current_URL.Append("&key=" & waypointkey)
+
+        Dim passed() As Integer = Status_check(Current_URL.ToString)
+        'sends this to the function that should return the length/duration of the route
+        'Dim current_route() As Integer = Datapull(array, length, nodes)
+        If passed(2) = 0 Then
+            shortest.status = 0
+        ElseIf passed(2) = -1 Then
+            shortest.status = -1
+        ElseIf passed(2) = -2 Then
+            shortest.status = -2
+        ElseIf passed(2) = -3 Then
+            shortest.status = -3
+        ElseIf passed(2) = -4 Then
+            shortest.status = -4
+        ElseIf passed(2) = 1 And passed(0) < shortest.distance Then
+            'replaces the previous short route with new shortest route
+            shortest.distance = passed(0)
+            shortest.duration = passed(1)
+            shortest.URL = Current_URL.ToString
+            shortest.status = passed(2)
+
+            Dim test As New StringBuilder
+
+            Console.WriteLine(array.Length - 1)
+            For i As Integer = 0 To array.Length - 1
+                Console.WriteLine(i)
+                shortest.nodes.Add(nodes.Item(array(i)))
+                test.Append(nodes.Item(array(i)) & ", ")
+            Next
+            Console.WriteLine(test.ToString)
+        ElseIf shortest.status = 1 Then
+            shortest.status = 2
+        Else
+            shortest.status = 0
+        End If
+        Return shortest
     End Function
 
 
@@ -406,123 +583,71 @@ Module Module1
         next_nodes.RemoveAt(0)
         length -= 1
 
-        List_print(next_nodes, False)
-        Console.WriteLine("final_route:")
-        List_print(final_route, False)
+        Dim testcount As Integer = 0
+        'List_print(next_nodes, False)
+        'Console.WriteLine("final_route:")
+        'List_print(final_route, False)
 
         'run whilst there are still nodes within the copied list this will loop
         'While next_nodes.Count > 0
         While length > -1
             distance = Integer.MaxValue
             For current_index As Integer = 0 To length
-                Console.WriteLine("Current tree is:" & final_route.Item(final_route.Count - 1) & "  to  " & next_nodes.Item(current_index))
-                'For current_index As Integer = length To 0 Step -1
+                testcount += 1
                 'creates URL to query distance between last node and the current node
                 using_URL.Append("https://maps.googleapis.com/maps/api/directions/json?origin=")
                 using_URL.Append(final_route.Item(final_route.Count - 1))
                 using_URL.Append("&destination=" & next_nodes.Item(current_index) & "&key=AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w")
 
-                For count As Integer = 1 To 3
-                    'pulls the route data and creates a string with it filled in
-                    Dim client As New WebClient()
-                    Dim client_Stream As Stream = client.OpenRead(using_URL.ToString)
-                    Dim streamreading As New StreamReader(client_Stream)
-                    Dim JSON_str As String = streamreading.ReadToEnd()
-                    streamreading.Close()
-                    client_Stream.Close()
+                Dim passed() As Integer = Status_check(using_URL.ToString)
 
-                    'checks if the route is possible or not
-                    Dim status_search As String = Chr(34) & "status" & Chr(34)
-                    Dim status_index As Integer = JSON_str.IndexOf(status_search)
-                    'Console.WriteLine(status_search)
-                    status_index += 12
-                    Dim status As New StringBuilder
-                    For i As Integer = status_index To JSON_str.Length
-                        If JSON_str.Substring(i, 1) = Chr(34) Then
-                            Exit For
-                            count += 1
-                        Else
-                            status.Append(JSON_str.Substring(i, 1))
-                        End If
-                    Next
-
-                    If status.ToString = "OK" Then
-                        'finds the distance of the route
-                        Dim dist_char As Integer = JSON_str.IndexOf("value")
-                        dist_char += 9
-                        Dim dist_converter As String = ""
-
-                        For i As Integer = dist_char To JSON_str.Length
-                            If JSON_str.Substring(i, 1) = " " Then
-                                Exit For
-                            Else
-                                dist_converter += JSON_str.Substring(i, 1)
-                            End If
-                        Next
-                        comp_dist = CInt(dist_converter)
-
-                        'checks if there was a permanent error in the parsed information
-                    ElseIf status.ToString = "ZERO_RESULTS" Then
-                        comp_dist = -2
-                        Console.WriteLine("Zero_results")
-                        Exit For
-                    ElseIf status.ToString = "NOT_FOUND" Then
-                        comp_dist = -3
-                        Console.WriteLine("not_found")
-                        Exit For
-                    ElseIf status.ToString = "OVER_QUERY_LIMIT" Then
-                        comp_dist = -4
-                        Console.WriteLine("Query limit achieved")
-                        Exit For
-                    ElseIf status.ToString = "MAX_ROUTE_LENGTH_EXCEEDED" Then
-                        comp_dist = -1
-                        Exit For
-                        'if the route wasn't valid but didn't fail catastrophically
-                    Else
-                        comp_dist = -1
-                    End If
-                Next
-                'bug testing
-                Console.WriteLine("current index: " & current_index & vbTab & "current route:" & comp_dist)
-                Console.WriteLine("Shortest index: " & shortest_tree & vbTab & "shortest distance: " & distance)
-                Console.WriteLine()
-                If comp_dist = -1 Then
-                    Console.WriteLine("Well that didn't work")
-                ElseIf comp_dist = -2 Then
-                    'Return -2
-                    Console.WriteLine("Well that didn't work: " & comp_dist)
-                    Exit While
-                ElseIf comp_dist = -3 Then
-                    'Return -3
-                    Console.WriteLine("Well that didn't work: " & comp_dist)
-                    Exit While
-                ElseIf comp_dist = -4 Then
-                    'Return -4
-                    Console.WriteLine("Well that didn't work: " & comp_dist)
-                    Exit While
-                ElseIf comp_dist < distance And comp_dist > 0 Then
-
-                    distance = comp_dist
+                If passed(2) = 0 Then
+                    'general error
+                    shortest.status = 0
+                ElseIf passed(2) = -1 Then
+                    'criticl error
+                    shortest.status = -1
+                    Return shortest
+                    Exit Function
+                ElseIf passed(2) = -2 Then
+                    'critical error
+                    shortest.status = -2
+                    Return shortest
+                    Exit Function
+                ElseIf passed(2) = -3 Then
+                    'critical error
+                    shortest.status = -3
+                    Return shortest
+                    Exit Function
+                ElseIf passed(2) = -4 Then
+                    'general error but this route is invalid
+                    shortest.status = -4
+                ElseIf passed(2) = 1 And passed(0) < distance And comp_dist > 0 Then
+                    distance = passed(0)
                     shortest_tree = current_index
+                ElseIf passed(2) = 1 And passed(0) > distance Then
+                    Console.WriteLine("Longer")
+                Else
+                    Console.WriteLine(passed(0) & vbTab & passed(1) & vbTab & passed(2))
+                    MsgBox("Something has gone wrong")
                 End If
-                'Console.ReadLine()
-                List_print(next_nodes, False)
-                Console.WriteLine("final_route:")
-                List_print(final_route, False)
+
                 using_URL.Clear()
             Next
+
             'adds the closest address to final_routes and removes it from the unvisited nodes list
             final_route.Add(next_nodes.Item(shortest_tree))
             next_nodes.RemoveAt(shortest_tree)
             length -= 1
         End While
-
+        Console.WriteLine(testcount)
         'if there was a fixed final destination this is now added to the final route
         If last = True Then
             final_route.Add(nodes.Item(nodes.Count - 1))
         End If
+
+        'builds a ULR to access the entire route
         Current_URL.Clear()
-        'checks the approximate route is valid using the API
         Current_URL.Append("https://maps.googleapis.com/maps/api/directions/json?origin=")
         'adds the addresses to the URL
         Current_URL.Append(final_route.Item(0) & "&destination=")
@@ -532,15 +657,25 @@ Module Module1
         Next
         Current_URL.Append("&key=AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w")
 
-        'Dim passed(1) As Integer
 
         'tries 3 times to get a connection and the appropriate data unless 
-        For count As Integer = 1 To 3
+        Dim fullpass() As Integer = Status_check(Current_URL.ToString)
+        shortest.nodes = final_route
+        shortest.URL = Current_URL.ToString
+        shortest.distance = fullpass(0)
+        shortest.duration = fullpass(1)
+        shortest.status = fullpass(2)
+        Return shortest
+    End Function
+
+    Function Status_check(ByVal URL As String)
+        Dim passed(2) As Integer
+        For count As Integer = 1 To 4
+
             Dim client As New WebClient()
-            Dim client_Stream As Stream = client.OpenRead(Current_URL.ToString)
+            Dim client_Stream As Stream = client.OpenRead(URL)
             Dim streamreading As New StreamReader(client_Stream)
             Dim JSON_str As String = streamreading.ReadToEnd()
-            streamreading.Close()
             client_Stream.Close()
 
             Dim status_search As String = Chr(34) & "status" & Chr(34)
@@ -548,6 +683,7 @@ Module Module1
             status_index += 12
             Dim status As New StringBuilder
             For i As Integer = status_index To JSON_str.Length
+                'Console.WriteLine(JSON_str.Substring(i, 1))
                 If JSON_str.Substring(i, 1) = Chr(34) Then
                     Exit For
                     count += 1
@@ -555,9 +691,11 @@ Module Module1
                     status.Append(JSON_str.Substring(i, 1))
                 End If
             Next
-            Console.WriteLine(status.ToString)
+
             'test if the status of the route is valid or not
             If status.ToString = "OK" Then
+                passed(2) = 1
+
                 'find the distance of the route
                 Dim dist_char As Integer = JSON_str.IndexOf("value")
                 dist_char += 9
@@ -569,8 +707,8 @@ Module Module1
                         dist_converter += JSON_str.Substring(i, 1)
                     End If
                 Next
-                'passed(0) = CInt(dist_converter)
-                shortest.distance = CInt(dist_converter)
+                passed(0) = CInt(dist_converter)
+
 
                 'finds the time length of the journey
                 Dim damaged_JSON As String = Right(JSON_str, JSON_str.Length - dist_char)
@@ -585,49 +723,292 @@ Module Module1
                         dura_converter += damaged_JSON.Substring(i, 1)
                     End If
                 Next
-                shortest.duration = CInt(dura_converter)
-                Console.WriteLine("shortest.distance: " & shortest.distance)
-                'passed(1) = CInt(dura_converter)
+                passed(1) = CInt(dura_converter)
 
-
-                shortest.URL = Current_URL.ToString
-                For i As Integer = 0 To final_route.Count - 1
-                    shortest.nodes.Add(final_route.Item(i))
-                Next
-                List_print(shortest.nodes, False)
-                Return shortest
+                Return passed
                 Exit Function
 
             ElseIf status.ToString = "ZERO_RESULTS" Then
-                shortest.distance = 2147483645
-                shortest.duration = 0
-                Console.WriteLine("Zero_results")
+                passed(0) = 2147483645
+                passed(1) = 2147483645
+                passed(2) = -4
                 Exit For
+
             ElseIf status.ToString = "NOT_FOUND" Then
-                shortest.distance = 2147483645
-                shortest.duration = -1
-                Console.WriteLine("not_found")
+                passed(0) = 2147483645
+                passed(1) = 2147483645
+                passed(2) = -1
                 Exit For
+
             ElseIf status.ToString = "OVER_QUERY_LIMIT" Then
-                shortest.distance = 2147483645
-                shortest.duration = -2
-                Console.WriteLine("Query limit achieved")
+                passed(0) = 2147483645
+                passed(1) = 2147483645
+                passed(2) = -2
                 Exit For
+
             ElseIf status.ToString = "MAX_WAYPOINTS_EXCEEDED" Then
-                shortest.distance = 2147483645
-                shortest.duration = -3
+                passed(0) = 2147483645
+                passed(1) = 2147483645
+                passed(2) = -3
                 Exit For
+
             ElseIf status.ToString = "MAX_ROUTE_LENGTH_EXCEEDED" Then
-                shortest.distance = 2147483645
-                shortest.duration = 2147483645
+                passed(0) = 2147483645
+                passed(1) = 2147483645
+                passed(0) = 0
                 Exit For
+
             Else
-                shortest.distance = 2147483645
-                shortest.duration = 2147483645
+                passed(0) = 2147483645
+                passed(1) = 2147483645
+                passed(2) = 0
             End If
         Next
-        Return shortest
+        Return passed
     End Function
+
+    'Public Function Approximation(ByVal nodes As List(Of String), ByVal last As Boolean)
+    '    'creates length that is the number of addresses being used
+    '    Dim length As Integer = nodes.Count - 1
+    '    'shortens length to ensure that if a last destination is chosen it remains the last address
+    '    If last = True Then
+    '        length -= 1
+    '    End If
+    '    'instantiating key variables
+    '    Dim using_URL As New StringBuilder
+    '    Dim next_nodes As List(Of String) = nodes
+    '    Dim final_route As New List(Of String)
+    '    Dim distance As Integer = 0
+    '    Dim comp_dist As Integer = Integer.MaxValue
+    '    Dim shortest_tree As New Integer
+
+    '    'add the starting address and remove it from next_nodes
+    '    final_route.Add(next_nodes.Item(0))
+    '    next_nodes.RemoveAt(0)
+    '    length -= 1
+
+    '    List_print(next_nodes, False)
+    '    Console.WriteLine("final_route:")
+    '    List_print(final_route, False)
+
+    '    'run whilst there are still nodes within the copied list this will loop
+    '    'While next_nodes.Count > 0
+    '    While length > -1
+    '        distance = Integer.MaxValue
+    '        For current_index As Integer = 0 To length
+    '            Console.WriteLine("Current tree is:" & final_route.Item(final_route.Count - 1) & "  to  " & next_nodes.Item(current_index))
+    '            'For current_index As Integer = length To 0 Step -1
+    '            'creates URL to query distance between last node and the current node
+    '            using_URL.Append("https://maps.googleapis.com/maps/api/directions/json?origin=")
+    '            using_URL.Append(final_route.Item(final_route.Count - 1))
+    '            using_URL.Append("&destination=" & next_nodes.Item(current_index) & "&key=AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w")
+
+    '            For count As Integer = 1 To 3
+    '                'pulls the route data and creates a string with it filled in
+    '                Dim client As New WebClient()
+    '                Dim client_Stream As Stream = client.OpenRead(using_URL.ToString)
+    '                Dim streamreading As New StreamReader(client_Stream)
+    '                Dim JSON_str As String = streamreading.ReadToEnd()
+    '                streamreading.Close()
+    '                client_Stream.Close()
+
+    '                'checks if the route is possible or not
+    '                Dim status_search As String = Chr(34) & "status" & Chr(34)
+    '                Dim status_index As Integer = JSON_str.IndexOf(status_search)
+    '                'Console.WriteLine(status_search)
+    '                status_index += 12
+    '                Dim status As New StringBuilder
+    '                For i As Integer = status_index To JSON_str.Length
+    '                    If JSON_str.Substring(i, 1) = Chr(34) Then
+    '                        Exit For
+    '                        count += 1
+    '                    Else
+    '                        status.Append(JSON_str.Substring(i, 1))
+    '                    End If
+    '                Next
+
+    '                If status.ToString = "OK" Then
+    '                    'finds the distance of the route
+    '                    Dim dist_char As Integer = JSON_str.IndexOf("value")
+    '                    dist_char += 9
+    '                    Dim dist_converter As String = ""
+
+    '                    For i As Integer = dist_char To JSON_str.Length
+    '                        If JSON_str.Substring(i, 1) = " " Then
+    '                            Exit For
+    '                        Else
+    '                            dist_converter += JSON_str.Substring(i, 1)
+    '                        End If
+    '                    Next
+    '                    comp_dist = CInt(dist_converter)
+
+    '                    'checks if there was a permanent error in the parsed information
+    '                ElseIf status.ToString = "ZERO_RESULTS" Then
+    '                    comp_dist = -2
+    '                    Console.WriteLine("Zero_results")
+    '                    Exit For
+    '                ElseIf status.ToString = "NOT_FOUND" Then
+    '                    comp_dist = -3
+    '                    Console.WriteLine("not_found")
+    '                    Exit For
+    '                ElseIf status.ToString = "OVER_QUERY_LIMIT" Then
+    '                    comp_dist = -4
+    '                    Console.WriteLine("Query limit achieved")
+    '                    Exit For
+    '                ElseIf status.ToString = "MAX_ROUTE_LENGTH_EXCEEDED" Then
+    '                    comp_dist = -1
+    '                    Exit For
+    '                    'if the route wasn't valid but didn't fail catastrophically
+    '                Else
+    '                    comp_dist = -1
+    '                End If
+    '            Next
+    '            'bug testing
+    '            Console.WriteLine("current index: " & current_index & vbTab & "current route:" & comp_dist)
+    '            Console.WriteLine("Shortest index: " & shortest_tree & vbTab & "shortest distance: " & distance)
+    '            Console.WriteLine()
+    '            If comp_dist = -1 Then
+    '                Console.WriteLine("Well that didn't work")
+    '            ElseIf comp_dist = -2 Then
+    '                'Return -2
+    '                Console.WriteLine("Well that didn't work: " & comp_dist)
+    '                Exit While
+    '            ElseIf comp_dist = -3 Then
+    '                'Return -3
+    '                Console.WriteLine("Well that didn't work: " & comp_dist)
+    '                Exit While
+    '            ElseIf comp_dist = -4 Then
+    '                'Return -4
+    '                Console.WriteLine("Well that didn't work: " & comp_dist)
+    '                Exit While
+    '            ElseIf comp_dist < distance And comp_dist > 0 Then
+
+    '                distance = comp_dist
+    '                shortest_tree = current_index
+    '            End If
+    '            'Console.ReadLine()
+    '            List_print(next_nodes, False)
+    '            Console.WriteLine("final_route:")
+    '            List_print(final_route, False)
+    '            using_URL.Clear()
+    '        Next
+    '        'adds the closest address to final_routes and removes it from the unvisited nodes list
+    '        final_route.Add(next_nodes.Item(shortest_tree))
+    '        next_nodes.RemoveAt(shortest_tree)
+    '        length -= 1
+    '    End While
+
+    '    'if there was a fixed final destination this is now added to the final route
+    '    If last = True Then
+    '        final_route.Add(nodes.Item(nodes.Count - 1))
+    '    End If
+    '    Current_URL.Clear()
+    '    'checks the approximate route is valid using the API
+    '    Current_URL.Append("https://maps.googleapis.com/maps/api/directions/json?origin=")
+    '    'adds the addresses to the URL
+    '    Current_URL.Append(final_route.Item(0) & "&destination=")
+    '    Current_URL.Append(final_route.Item(final_route.Count - 1) & "&waypoints=")
+    '    For t As Integer = 1 To final_route.Count - 2
+    '        Current_URL.Append("via:" & final_route.Item(t) & "|")
+    '    Next
+    '    Current_URL.Append("&key=AIzaSyBqN-1pDwR8taEDQESDP5mnJjiJkIXmv-w")
+
+    '    'Dim passed(1) As Integer
+
+    '    'tries 3 times to get a connection and the appropriate data unless 
+    '    For count As Integer = 1 To 3
+    '        Dim client As New WebClient()
+    '        Dim client_Stream As Stream = client.OpenRead(Current_URL.ToString)
+    '        Dim streamreading As New StreamReader(client_Stream)
+    '        Dim JSON_str As String = streamreading.ReadToEnd()
+    '        streamreading.Close()
+    '        client_Stream.Close()
+
+    '        Dim status_search As String = Chr(34) & "status" & Chr(34)
+    '        Dim status_index As Integer = JSON_str.IndexOf(status_search)
+    '        status_index += 12
+    '        Dim status As New StringBuilder
+    '        For i As Integer = status_index To JSON_str.Length
+    '            If JSON_str.Substring(i, 1) = Chr(34) Then
+    '                Exit For
+    '                count += 1
+    '            Else
+    '                status.Append(JSON_str.Substring(i, 1))
+    '            End If
+    '        Next
+    '        Console.WriteLine(status.ToString)
+    '        'test if the status of the route is valid or not
+    '        If status.ToString = "OK" Then
+    '            'find the distance of the route
+    '            Dim dist_char As Integer = JSON_str.IndexOf("value")
+    '            dist_char += 9
+    '            Dim dist_converter As String = ""
+    '            For i As Integer = dist_char To JSON_str.Length
+    '                If JSON_str.Substring(i, 1) = " " Then
+    '                    Exit For
+    '                Else
+    '                    dist_converter += JSON_str.Substring(i, 1)
+    '                End If
+    '            Next
+    '            'passed(0) = CInt(dist_converter)
+    '            shortest.distance = CInt(dist_converter)
+
+    '            'finds the time length of the journey
+    '            Dim damaged_JSON As String = Right(JSON_str, JSON_str.Length - dist_char)
+    '            Dim dura_char As Integer
+    '            dura_char = damaged_JSON.IndexOf("value")
+    '            dura_char += 9
+    '            Dim dura_converter As String = ""
+    '            For i As Integer = dura_char To damaged_JSON.Length
+    '                If damaged_JSON.Substring(i, 1) = " " Then
+    '                    Exit For
+    '                Else
+    '                    dura_converter += damaged_JSON.Substring(i, 1)
+    '                End If
+    '            Next
+    '            shortest.duration = CInt(dura_converter)
+    '            Console.WriteLine("shortest.distance: " & shortest.distance)
+    '            'passed(1) = CInt(dura_converter)
+
+
+    '            shortest.URL = Current_URL.ToString
+    '            For i As Integer = 0 To final_route.Count - 1
+    '                shortest.nodes.Add(final_route.Item(i))
+    '            Next
+    '            List_print(shortest.nodes, False)
+    '            Return shortest
+    '            Exit Function
+
+    '        ElseIf status.ToString = "ZERO_RESULTS" Then
+    '            shortest.distance = 2147483645
+    '            shortest.duration = 0
+    '            Console.WriteLine("Zero_results")
+    '            Exit For
+    '        ElseIf status.ToString = "NOT_FOUND" Then
+    '            shortest.distance = 2147483645
+    '            shortest.duration = -1
+    '            Console.WriteLine("not_found")
+    '            Exit For
+    '        ElseIf status.ToString = "OVER_QUERY_LIMIT" Then
+    '            shortest.distance = 2147483645
+    '            shortest.duration = -2
+    '            Console.WriteLine("Query limit achieved")
+    '            Exit For
+    '        ElseIf status.ToString = "MAX_WAYPOINTS_EXCEEDED" Then
+    '            shortest.distance = 2147483645
+    '            shortest.duration = -3
+    '            Exit For
+    '        ElseIf status.ToString = "MAX_ROUTE_LENGTH_EXCEEDED" Then
+    '            shortest.distance = 2147483645
+    '            shortest.duration = 2147483645
+    '            Exit For
+    '        Else
+    '            shortest.distance = 2147483645
+    '            shortest.duration = 2147483645
+    '        End If
+    '    Next
+    '    Return shortest
+    'End Function
 
 
     'Function FindLat(ByVal destination As String, ByVal key As String)
