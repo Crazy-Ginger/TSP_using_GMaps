@@ -54,13 +54,13 @@ Module Module1
         List_print(node_list, False)
 
         'shortest = Permute(node_list.Count, node_list, cont)
-        shortest = Approximation(node_list, cont)
+        shortest = Permute(node_list.Count, node_list, cont)
         Console.WriteLine("Shortest distance was: " & shortest.distance / 1000 & " km")
         For i As Integer = 0 To shortest.nodes.Count - 1
             Console.Write(shortest.nodes.Item(i) & ", ")
         Next
         'Console.WriteLine()
-        'Console.WriteLine(shortest.URL)
+        Console.WriteLine(shortest.URL)
         Console.ReadLine()
     End Sub
 
@@ -668,7 +668,12 @@ Module Module1
         Return shortest
     End Function
 
+
     Function Status_check(ByVal URL As String)
+        'Dim file As System.IO.StreamWriter
+        'file = My.Computer.FileSystem.OpenTextFileWriter("C:\Users\awardle\source\repos\Complex_Algorithm\Complex_Algorithm\Tester\Test file.txt", True)
+        'file.WriteLine(URL)
+        'file.Close()
         Dim passed(2) As Integer
         For count As Integer = 1 To 4
 
@@ -692,6 +697,7 @@ Module Module1
                 End If
             Next
 
+            'Console.WriteLine(status.ToString)
             'test if the status of the route is valid or not
             If status.ToString = "OK" Then
                 passed(2) = 1
